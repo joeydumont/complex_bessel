@@ -1,0 +1,3 @@
+Version 0.2
+ -- Add support for real arguments via a static cast
+	from double to complex<double>.

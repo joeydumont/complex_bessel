@@ -1,6 +1,6 @@
 # Process this file with autoconf to produce a configure script.
 AC_INIT(complex_bessel, 0.1, gagnon88@gmail.com)
-AC_INIT_AUTOMAKE([1.10 -Wall no-define subdir-objects])
+AM_INIT_AUTOMAKE([1.10 -Wall no-define subdir-objects])
 
 # Required autoconf version
 AC_PREREQ([2.59])
@@ -12,8 +12,9 @@ AC_CONFIG_HEADERS([config.h])
 AC_PROG_CXX
 AC_PROG_CC
 
-# Check installation of Fortran 77 (gfortran is preferrable)
+# Check installation of Fortran 77 (gfortran is preferable)
 AC_PROG_F77([gfortran f95 fl32 f77 fort77 xlf g77 f90 xlf90])
+AC_PROG_FC
 
 # Enable shared library
 AC_PROG_INSTALL
