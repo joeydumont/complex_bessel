@@ -24,3 +24,6 @@ which uses the configure.ac file to generate a configure script. Then, running
 ```
 
 should do the trick. The library will be installed to `/usr/local/lib` by default, so make sure that your compiler looks for libraries in that folder.
+
+## Example
+![Contours of Hankel function](/tests/contours.png)
