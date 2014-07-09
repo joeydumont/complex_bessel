@@ -11,18 +11,16 @@
 
 #include <complex>
 #include <iostream>
-#include <complex_bessel/sp_hankel.h>
+#include <complex_bessel.h>
 
 using namespace std;
 
 int main()
 {
-
-  sp_Hankel myHankel(1, 0.0);
-  
+ 
   complex<double> Z(1.45,8.45);
   
-  complex<double> Y = myHankel(Z);
+  complex<double> Y = sp_bessel::besselH1(0,Z);
   
   cout << "Computing the value of the Hankel function of "
   << "the first kind, order 0" << endl;

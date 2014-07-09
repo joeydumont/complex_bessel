@@ -65,6 +65,13 @@ extern void zbiry_wrap(double,double,int,int,double*,double*,int*,int*);
 }
 ///@}
 
+/*! Stores important constants that are used in the code. */
+namespace constants
+{
+    const double pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679;
+    const std::complex<double> i = std::complex<double>(0.0,1.0);
+};
+
 /*! @name Evaluation of Bessel functions.
  * We implement Amos' Fortran subroutines in C++.
  * \todo Provide error detection and signaling.  */
@@ -73,31 +80,22 @@ extern void zbiry_wrap(double,double,int,int,double*,double*,int*,int*);
  * computes the derivative of the Bessel funcitons \f$J,\,Y,\,H^{(1,2)},\,I,\,K\f$
  * using the recurrence relations \cite ABR65 (Sects. 9.1.27/9.6.26). */
 template <std::complex<double> (*T)(int, std::complex<double>)>
-inline std::complex<double> diffBessel(int order, std::complex<double> z, int signs = 0)
+inline std::complex<double> diffBessel(int order, std::complex<double> z, int n, double phase)
 {
-	double sgn1(1.),sgn2(-1.);
-	switch (signs)
-	{
-		case 1:
-		// Bessel function I. 
-		{
-			sgn2 = 1.;
-			break;
-		}
-		case 2:
-		// Bessel function K.
-		{
-			sgn1 = -1.;
-			sgn2 = -1.;
-			break;
-		}
-		default:
-		{
-			break;
-		}
-	}
+    // For J, Y, H1 and H2, phase = -1. 
+    // For I, e^(order*pi*i)K, phase = 1. 
+    // First term of the serie. 
+    double p = 1.0;
+    std::complex<double> s = T(order-n, z);
 
-    return 0.5*(sgn1*T(order-1.0,z)+sgn2*T(order+1.0,z));
+    // Rest of the series
+    for (int i=1;i<=n;i++)
+    {
+        p = phase * (p*(n-i+1)) / i; // = choose(n,k).
+        s += p*T(order-n+2*i, z);
+    }
+
+    return s/std::pow(2.0,n);
 }
 
 /*! Computes the Bessel functions of the first kind with the reflection formula
@@ -131,10 +129,10 @@ inline std::complex<double> besselJ(int order, std::complex<double> z)
     return answer;
 }
 
-/*! Computes the first derivative of besselJ. */
-inline std::complex<double> besselJp(int order, std::complex<double> z)
+/*! Computes the nth derivative of besselJ. */
+inline std::complex<double> besselJp(int order, std::complex<double> z, int n=1)
 {
-	return diffBessel<besselJ>(order, z);
+	return diffBessel<besselJ>(order, z, n, -1);
 }
 
 /*! Computes the Bessel function of the second kind with the reflection formula
@@ -175,10 +173,10 @@ inline std::complex<double> besselY(int order, std::complex<double> z)
     return answer;
 }
 
-/*! Computes the first derivative of besselY. */
-inline std::complex<double> besselYp(int order, std::complex<double> z)
+/*! Computes the nth derivative of besselY. */
+inline std::complex<double> besselYp(int order, std::complex<double> z, int n=1)
 {
-	return diffBessel<besselY>(order, z);
+	return diffBessel<besselY>(order, z, n, -1);
 }
 
 /*! Computes the modified Bessel function of the first kind. Negative
@@ -206,10 +204,10 @@ inline std::complex<double> besselI(int order, std::complex<double> z)
 	return answer;
 }
 
-/*! Computes the first derivative of besselI. */
-inline std::complex<double> besselIp(int order, std::complex<double> z)
+/*! Computes the nth derivative of besselI. */
+inline std::complex<double> besselIp(int order, std::complex<double> z, int n=1)
 {
-	return diffBessel<besselI>(order, z, 1);
+	return diffBessel<besselI>(order, z, n, 1);
 }
 
 /*! Computes the modified Bessel function of the second kind. Negative
@@ -244,10 +242,15 @@ inline std::complex<double> besselK(int order, std::complex<double> z)
     return answer;
 }
 
-/*! Computes the first derivative of besselK. */
-inline std::complex<double> besselKp(int order, std::complex<double> z)
+inline std::complex<double> expBesselK(int order, std::complex<double> z)
 {
-	return diffBessel<besselK>(order, z, 2);
+    return std::exp(order*constants::pi*constants::i)*besselK(order,z);
+}
+
+/*! Computes the nth derivative of besselK. */
+inline std::complex<double> besselKp(int order, std::complex<double> z, int n=1)
+{
+	return diffBessel<expBesselK>(order, z, n, 1);
 }
 
 /*! Computes the Hankel function of the first kind. We also implement
@@ -256,38 +259,37 @@ inline std::complex<double> besselKp(int order, std::complex<double> z)
 inline std::complex<double> besselH1(int order, std::complex<double> z)
 {
     // Input values.
-//    double zr = std::real(z);
-//    double zi = std::imag(z);
-//    double nu = std::fabs((double) order);
-//    int kode = 1;
-//    int N = 1;
-//    int kind = 1;
+    double zr = std::real(z);
+    double zi = std::imag(z);
+    double nu = std::fabs((double) order);
+    int kode = 1;
+    int N = 1;
+    int kind = 1;
 
-//    // Output values
-//    double cyr,cyi;
-//    int nz,ierr;
+    // Output values
+    double cyr,cyi;
+    int nz,ierr;
 
-//    // External function call.
-//    zbesh_wrap(zr,zi,nu,kode,kind,N,&cyr,&cyi,&nz,&ierr);
-//    std::complex<double> answer(cyr,cyi);
+    // External function call.
+    zbesh_wrap(zr,zi,nu,kode,kind,N,&cyr,&cyi,&nz,&ierr);
+    std::complex<double> answer(cyr,cyi);
 
-//    // Reflection formula if order is negative.
-//    if (order < 0.0)
-//    {
-//        // Compute complex exponential.
-//        std::complex<double> i(0.0,1.0);
-//        i = std::exp(arma::datum::pi*nu*i);
-//        answer *= i;
-//    }
+    // Reflection formula if order is negative.
+    if (order < 0.0)
+    {
+        // Compute complex exponential.
+        std::complex<double> i(0.0,1.0);
+        i = std::exp(constants::pi*nu*i);
+        answer *= i;
+    }
 
-    std::complex<double> i(0.0,1.0);
-    return besselJ(order,z)+i*besselY(order,z);
+    return answer;
 }
 
-/*! Computes the first derivative of besselH1. */
-inline std::complex<double> besselH1p(int order, std::complex<double> z)
+/*! Computes the nth derivative of besselH1. */
+inline std::complex<double> besselH1p(int order, std::complex<double> z, int n=1)
 {
-	return diffBessel<besselH1>(order, z);
+	return diffBessel<besselH1>(order, z, n, -1);
 }
 
 /*! Computes the Hankel function of the second kind. We also implement the reflection
@@ -295,37 +297,36 @@ inline std::complex<double> besselH1p(int order, std::complex<double> z)
 inline std::complex<double> besselH2(int order, std::complex<double> z)
 {
 //    // Input values.
-//    double zr = std::real(z);
-//    double zi = std::imag(z);
-//    double nu = std::fabs((double) order);
-//    int kode = 1;
-//    int N = 1;
-//    int kind = 2;
+    double zr = std::real(z);
+    double zi = std::imag(z);
+    double nu = std::fabs((double) order);
+    int kode = 1;
+    int N = 1;
+    int kind = 2;
 
-//    // Output values
-//    double cyr,cyi;
-//    int nz,ierr;
+    // Output values
+    double cyr,cyi;
+    int nz,ierr;
 
-//    // External function call.
-//    zbesh_wrap(zr,zi,nu,kode,kind,N,&cyr,&cyi,&nz,&ierr);
-//    std::complex<double> answer(cyr,cyi);
+    // External function call.
+    zbesh_wrap(zr,zi,nu,kode,kind,N,&cyr,&cyi,&nz,&ierr);
+    std::complex<double> answer(cyr,cyi);
 
-//    // Reflection formula if order is negative.
-//    if (order < 0.0 )
-//    {
-//        std::complex<double> i(0.0,1.0);
-//        i = std::exp(-arma::datum::pi*nu*i);
-//        answer *= i;
-//    }
+    // Reflection formula if order is negative.
+    if (order < 0.0 )
+    {
+        std::complex<double> i(0.0,1.0);
+        i = std::exp(-constants::pi*nu*i);
+        answer *= i;
+    }
 
-    std::complex<double> i(0.0,1.0);
-    return besselJ(order,z)-i*besselY(order,z);
+    return answer;
 }
 
-/*! Computes the first derivative of besselH2.*/
-inline std::complex<double> besselH2p(int order, std::complex<double> z)
+/*! Computes the nth derivative of besselH2.*/
+inline std::complex<double> besselH2p(int order, std::complex<double> z, int n=1)
 {
-	return diffBessel<besselH2>(order, z);
+	return diffBessel<besselH2>(order, z, n, -1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679);
 }
 
 
@@ -378,6 +379,7 @@ inline std::complex<double> biryp(std::complex<double> z)
 {
 	return biry(z,1);
 }
+
 ///@}
 }
 
