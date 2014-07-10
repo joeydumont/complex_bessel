@@ -256,7 +256,7 @@ inline std::complex<double> besselKp(int order, std::complex<double> z, int n=1)
 /*! Computes the Hankel function of the first kind. We also implement
  * the reflection formula \f$H^{(1)}_{-\nu}(z) = H^{(1)}_\nu(z)\exp\left(\pi\nu\imath\right)
  * \f$. */
-inline std::complex<double> besselH1(int order, std::complex<double> z)
+inline std::complex<double> hankelH1(int order, std::complex<double> z)
 {
     // Input values.
     double zr = std::real(z);
@@ -286,15 +286,15 @@ inline std::complex<double> besselH1(int order, std::complex<double> z)
     return answer;
 }
 
-/*! Computes the nth derivative of besselH1. */
-inline std::complex<double> besselH1p(int order, std::complex<double> z, int n=1)
+/*! Computes the nth derivative of hankelH1. */
+inline std::complex<double> hankelH1p(int order, std::complex<double> z, int n=1)
 {
-	return diffBessel<besselH1>(order, z, n, -1);
+	return diffBessel<hankelH1>(order, z, n, -1);
 }
 
 /*! Computes the Hankel function of the second kind. We also implement the reflection
  * formula \f$H^{(1)}_{-\nu}(z) = H^{(1)}_\nu(z)\exp\left(-\pi\nu\imath\right)\f$. */
-inline std::complex<double> besselH2(int order, std::complex<double> z)
+inline std::complex<double> hankelH2(int order, std::complex<double> z)
 {
 //    // Input values.
     double zr = std::real(z);
@@ -323,10 +323,10 @@ inline std::complex<double> besselH2(int order, std::complex<double> z)
     return answer;
 }
 
-/*! Computes the nth derivative of besselH2.*/
-inline std::complex<double> besselH2p(int order, std::complex<double> z, int n=1)
+/*! Computes the nth derivative of hankelH2.*/
+inline std::complex<double> hankelH2p(int order, std::complex<double> z, int n=1)
 {
-	return diffBessel<besselH2>(order, z, n, -1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679);
+	return diffBessel<hankelH2>(order, z, n, -1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679);
 }
 
 
