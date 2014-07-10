@@ -20,7 +20,7 @@ int main()
  
   complex<double> Z(1.45,8.45);
   
-  complex<double> Y = sp_bessel::besselH1(0,Z);
+  complex<double> Y = sp_bessel::hankelH1(0,Z);
   
   cout << "Computing the value of the Hankel function of "
   << "the first kind, order 0" << endl;

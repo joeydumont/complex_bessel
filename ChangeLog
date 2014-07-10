@@ -1,0 +1,6 @@
+Release 0.3.2
+ - Changed function names: 
+	besselH1 -> hankelH1
+	besselH1p-> hankelH1p
+	besselH2 -> hankelH2
+	besselH2p-> hankelH2p
