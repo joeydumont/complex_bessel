@@ -32,7 +32,7 @@ int main()
     X = 6.0*idX/99.0 - 4.0;
     Y = 3.0*idY/99.0 - 1.5;
     
-    Z = sp_bessel::besselH1(0, complex<double>(X,Y) );
+    Z = sp_bessel::hankelH1(0, complex<double>(X,Y) );
     
     outfile << X << " " << Y << " " << real(Z) << " " << imag(Z) << endl;
 

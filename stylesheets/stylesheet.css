@@ -196,6 +196,27 @@ ul, ol, dl {
   margin-bottom: 20px;
 }
 
+ul.navbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+li.navbar {
+  list-style-type: none;
+  float: left;
+}
+
+a.navbar {
+  display: block;
+  width: 250px;
+  line-height: 25px;
+  font-family: "Arial";
+  font-size: 15px; 
+  text-align: center;
+}
+
 
 /* COMMON STYLES */
 
@@ -218,7 +239,7 @@ em {
 
 table {
   width: 100%;
-  border: 1px solid #ebebeb;
+  border: 0px solid #ebebeb;
 }
 
 th {
@@ -227,8 +248,9 @@ th {
 
 td {
   border: 1px solid #ebebeb;
-  text-align: center; 
+  text-align: left; 
   font-weight: 300;
+  min-width: 150px;
 }
 
 form {
