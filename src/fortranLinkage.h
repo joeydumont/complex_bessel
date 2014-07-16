@@ -250,7 +250,7 @@ inline std::complex<double> expBesselK(int order, std::complex<double> z)
 /*! Computes the nth derivative of besselK. */
 inline std::complex<double> besselKp(int order, std::complex<double> z, int n=1)
 {
-	return diffBessel<expBesselK>(order, z, n, 1);
+	return std::exp(-order*constants::pi*constants::i)*diffBessel<expBesselK>(order, z, n, 1);
 }
 
 /*! Computes the Hankel function of the first kind. We also implement
@@ -326,7 +326,7 @@ inline std::complex<double> hankelH2(int order, std::complex<double> z)
 /*! Computes the nth derivative of hankelH2.*/
 inline std::complex<double> hankelH2p(int order, std::complex<double> z, int n=1)
 {
-	return diffBessel<hankelH2>(order, z, n, -1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679);
+	return diffBessel<hankelH2>(order, z, n, -1);
 }
 
 
