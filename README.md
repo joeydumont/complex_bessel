@@ -1,7 +1,7 @@
 complex_bessel
 ==============
 
-A C++ library to evaluate Bessel functions of all kinds.
+A C++ library to evaluate Bessel functions of all kinds. More information can be found on the [website](http://valandil.github.io/complex_bessel).
 
 ## Introduction
 
