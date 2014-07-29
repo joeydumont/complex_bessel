@@ -1,5 +1,6 @@
 complex_bessel
 ==============
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.11077.png)](http://dx.doi.org/10.5281/zenodo.11077)
 
 A C++ library to evaluate Bessel functions of all kinds. More information can be found on the [website](http://valandil.github.io/complex_bessel).
 
