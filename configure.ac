@@ -1,5 +1,5 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT(complex_bessel, 0.1, gagnon88@gmail.com)
+AC_INIT(complex_bessel, 0.4.0, gagnon88@gmail.com)
 AM_INIT_AUTOMAKE([1.10 -Wall no-define subdir-objects])
 
 # Required autoconf version
