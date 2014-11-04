@@ -15,7 +15,7 @@
 #ifndef BESSELFUNCTIONS_H
 #define BESSELFUNCTIONS_H
 
-#include "constants.h."
+#include "utilities.h"
 #include "fortranLinkage.h"
 
 namespace sp_bessel {
@@ -27,7 +27,7 @@ namespace sp_bessel {
  * computes the derivative of the Bessel functions \f$J,\,Y,\,H^{(1,2)},\,I,\,K\f$
  * using the recurrence relations \cite ABR65 (Sects. 9.1.27/9.6.26). */
 template <std::complex<double> (*T)(double, std::complex<double>)>
-inline std::complex<double> diffBessel(double order, rstd::complex<double> z, int n, double phase)
+inline std::complex<double> diffBessel(double order, std::complex<double> z, int n, double phase)
 {
     // For J, Y, H1 and H2, phase = -1. 
     // For I, e^(order*pi*i)K, phase = 1. 
@@ -65,14 +65,28 @@ inline std::complex<double> besselJ(double order, std::complex<double> z)
     std::complex<double> answer(cyr,cyi);               // Placeholder for output.
 
     // If order is negative, then we must apply the reflection formula.
-    if (order < 0)
+    if (order < 0.0)
     {
-        answer *= (order & 1 ? -1.0 : 1.0);
+      // We prepare the rotation coefficients.
+      double c = cos_pi(nu);
+      double s = sin_pi(nu);
+
+      // We compute the Bessel Y function.
+      double cyrY, cyiY, cwrkr, cwrki;
+      int nzY, ierrY, kodeY(1), NY(1);
+
+      // External function call
+      zbesy_wrap(zr,zi,nu,kodeY,NY,&cyrY,&cyiY,&nzY,&cwrkr,&cwrki,&ierrY);
+      std::complex<double> answerY(cyrY,cyiY);
+
+      answer = c*answer - s*answerY;
     }
 
     // If the return code is not normal, we print the error code.
     if (ierr!=0) std::cout << "besselJ: Error code " << ierr << "." << std::endl;
 
+    // If the argument is real, then the output must be real.
+    if (zi == 0.0) answer.imag() = 0.0;
     return answer;
 }
 
@@ -109,9 +123,19 @@ inline std::complex<double> besselY(double order, std::complex<double> z)
     std::complex<double> answer(cyr,cyi);                           // Placeholder for output
 
     // If order is negative, we must apply the reflection formula.
-    if (order < 0)
+    if (order < 0.0)
     {
-        answer *= (order & 1 ? -1.0 : 1.0);
+      // We prepare the rotation coefficients. 
+      double c = cos_pi(nu);
+      double s = sin_pi(nu);
+
+      // We compute the Bessel J function.
+      double cyrJ,cyiJ;
+      int nzJ, ierrJ, kodeJ(1), NJ(1);
+
+      zbesj_wrap(zr,zi,nu,kodeJ,NJ,&cyrJ,&cyiJ,&nzJ,&ierrJ);
+      std::complex<double> answerJ(cyrJ,cyiJ);
+      answer = s*answerJ + c*answer;
     }
 
     // If the return code is not normal, we print the error code.
@@ -143,7 +167,26 @@ inline std::complex<double> besselI(double order, std::complex<double> z)
 
   // External function call. 
   zbesi_wrap(zr,zi,nu,kode,N,&cyr,&cyi,&nz,&ierr); // Call Fortran subroutine.
+
+  // If the argument is real, the output is real.
+  if (zi == 0.0) cyi = 0.0;
   std::complex<double> answer(cyr,cyi);
+
+  // We apply the reflection formula is order is negative.
+  if (order < 0.0)
+  {
+    // We prepare the reflection coefficients.
+    double s = sin_pi(nu);
+
+    // We evaluate the besselK function.
+    int kodeK(1), NK(1), nzK, ierrK;
+    double cyrK, cyiK;
+
+    // External function call.
+    zbesk_wrap(zr,zi,nu,kode,N,&cyrK,&cyiK,&nzK,&ierrK);
+    std::complex<double> answerK(cyrK,cyiK);
+    answer += 2.0/constants::pi*s*answerK;
+  }
 
   // In case of error, we print the error code. 
   if (ierr!=0) std::cout << "besselI: Error code " << ierr << "." << std::endl;

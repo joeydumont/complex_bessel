@@ -21,5 +21,7 @@
  */
 
 #include "complex_bessel/fortranLinkage.h"
+#include "complex_bessel/utilities.h"
+#include "complex_bessel/besselFunctions.h"
 
 #endif

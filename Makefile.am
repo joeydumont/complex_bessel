@@ -10,7 +10,7 @@ libcomplex_bessel_la_LDFLAGS = -release 0.4.0
 
 # List of needed headers
 library_includedir=$(includedir)/complex_bessel
-library_include_HEADERS = src/fortranLinkage.h  
+library_include_HEADERS = src/fortranLinkage.h  src/utilities.h src/besselFunctions.h
 
 library2_includedir=$(includedir)
 library2_include_HEADERS = complex_bessel.h
