@@ -86,7 +86,7 @@ inline std::complex<double> besselJ(double order, std::complex<double> z)
     if (ierr!=0) std::cout << "besselJ: Error code " << ierr << "." << std::endl;
 
     // If the argument is real, then the output must be real.
-    if (zi == 0.0) answer.imag() = 0.0;
+    if (zi == 0.0) answer.imag(0.0);
     return answer;
 }
 
