@@ -19,6 +19,7 @@
 #include "fortranLinkage.h"
 
 namespace sp_bessel {
+  
  /*! @name Evaluation of Bessel functions.
  * We implement Amos' Fortran subroutines in C++.
  * \todo Provide error detection and signaling.  */

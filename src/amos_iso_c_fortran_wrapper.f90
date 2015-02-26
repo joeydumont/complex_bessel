@@ -2,10 +2,10 @@
 ! - Author: 		Joey Dumont <joey.dumont@gmail.com>         -
 !                       Denis Gagnon <gagnon88@gmail.com>           -
 ! - Date created:	2013-11-18                                  -
-! - Date modded:	2014-11-26                                  -
+! - Date modded:	2015-02-26                                  -
 ! - Description:        ISO C Binding wrapper for the FORTRAN       -
 !                       subroutines contained in D. E. Amos' Bessel -
-!                       functions library­.                          -
+!                       functions library.                          -
 ! -------------------------------------------------------------------
 
 ! Bessel function of the first kind.

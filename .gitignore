@@ -1,3 +1,6 @@
+tests/
+build/
+
 # http://www.gnu.org/software/automake
 
 Makefile.in

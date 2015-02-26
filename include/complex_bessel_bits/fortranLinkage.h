@@ -21,9 +21,6 @@
 #ifndef FORTRANLINKAGE_H
 #define FORTRANLINKAGE_H
 
-#include <complex>
-#include <iostream>
-
 namespace sp_bessel {
 /*! @name Fortran Linkage
  * We link the Fortran subroutines to our C++ code.

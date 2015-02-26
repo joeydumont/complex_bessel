@@ -1,7 +1,7 @@
 #ifndef CBESSEL_
 #define CBESSEL_
 
-/*! \file complex_bessel
+/*! \file complex_bessel.h
  *
  * \author Joey Dumont <joey.dumont@gmail.com>
  * \author Denis Gagnon <gagnon88@gmail.com>
@@ -20,8 +20,8 @@
  * \copyright LGPL.
  */
 
-#include "complex_bessel/fortranLinkage.h"
-#include "complex_bessel/utilities.h"
-#include "complex_bessel/besselFunctions.h"
+#include "complex_bessel_bits/fortranLinkage.h"
+#include "complex_bessel_bits/utilities.h"
+#include "complex_bessel_bits/besselFunctions.h"
 
 #endif

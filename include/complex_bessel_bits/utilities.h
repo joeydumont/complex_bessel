@@ -1,4 +1,4 @@
-/*! \file Utilities.h
+/*! \file utilities.h
  *
  * \author Joey Dumont <joey.dumont@gmail.com>
  * \author Denis Gagnon <gagnon88@gmail.com>
@@ -19,12 +19,12 @@
 namespace sp_bessel {
 
 namespace constants {
-  const double pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679;
-  const std::complex<double> i = std::complex<double>(0.0,1.0);
+  const double pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679; ///< Good old pi.
+  const std::complex<double> i = std::complex<double>(0.0,1.0);                                                             ///< Imaginary number.
 }
 
-// We compute the value of cos(pi*nu), paying particular
-// attention to the case where nu is an integer.
+/// We compute the value of cos(pi*nu), paying particular
+/// attention to the case where nu is an integer.
 inline double cos_pi(double nu)
 {
   // Detect if nu is an integer. If |nu|>1e14, the significand is saturated
@@ -37,8 +37,8 @@ inline double cos_pi(double nu)
   return std::cos(constants::pi*nu);
 }
 
-// We compute the value of sin(pi*nu), paying particular 
-// attention to the case where nu is an integer.
+/// We compute the value of sin(pi*nu), paying particular 
+/// attention to the case where nu is an integer.
 inline double sin_pi(double nu)
 {
   // Detect if nu is an integer. Same comment as above if |nu|>1e14.
