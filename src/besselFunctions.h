@@ -62,6 +62,9 @@ inline std::complex<double> besselJ(double order, std::complex<double> z)
 
     // External function call
     zbesj_wrap(zr,zi,nu,kode,N,&cyr,&cyi,&nz,&ierr);    // Call Fortran subroutine.
+
+    // If the input is real, then the output should be real as well.
+    if (zi == 0.0 && zr >= 0.0) cyi = 0.0;
     std::complex<double> answer(cyr,cyi);               // Placeholder for output.
 
     // If order is negative, then we must apply the reflection formula.
@@ -85,8 +88,6 @@ inline std::complex<double> besselJ(double order, std::complex<double> z)
     // If the return code is not normal, we print the error code.
     if (ierr!=0) std::cout << "besselJ: Error code " << ierr << "." << std::endl;
 
-    // If the argument is real, then the output must be real.
-    if (zi == 0.0) answer.imag(0.0);
     return answer;
 }
 
@@ -119,7 +120,7 @@ inline std::complex<double> besselY(double order, std::complex<double> z)
     // leads to product of the form zero*infinity, which destroys numerical precision. We hence
     // manually set the imaginary part of the answer to zero is the imaginary part of the input
     // is zero. 
-    if (zi == 0.0) cyi=0.0;
+    if (zi == 0.0 && zr >= 0.0) cyi=0.0;
     std::complex<double> answer(cyr,cyi);                           // Placeholder for output
 
     // If order is negative, we must apply the reflection formula.
@@ -168,8 +169,8 @@ inline std::complex<double> besselI(double order, std::complex<double> z)
   // External function call. 
   zbesi_wrap(zr,zi,nu,kode,N,&cyr,&cyi,&nz,&ierr); // Call Fortran subroutine.
 
-  // If the argument is real, the output is real.
-  if (zi == 0.0) cyi = 0.0;
+  // Enforcing some conditions on the output as a function of the output.
+  if (zi == 0.0 && zr >= 0.0) cyi = 0.0;
   std::complex<double> answer(cyr,cyi);
 
   // We apply the reflection formula is order is negative.
@@ -184,6 +185,8 @@ inline std::complex<double> besselI(double order, std::complex<double> z)
 
     // External function call.
     zbesk_wrap(zr,zi,nu,kode,N,&cyrK,&cyiK,&nzK,&ierrK);
+
+    if (zi == 0.0 && zr >= 0.0) cyiK = 0.0;
     std::complex<double> answerK(cyrK,cyiK);
     answer += 2.0/constants::pi*s*answerK;
   }
@@ -223,7 +226,7 @@ inline std::complex<double> besselK(double order, std::complex<double> z)
     // leads to product of the form zero*infinity for the imaginary part, which destroys numerical precision. We hence
     // manually set the imaginary part of the answer to zero is the imaginary part of the input
     // is zero.
-    if (zi == 0.0) cyi = 0.0;
+    if (zi == 0.0 && zr >= 0.0) cyi = 0.0;
     std::complex<double> answer(cyr,cyi); 
 
     // In case of error, we print the error code.
