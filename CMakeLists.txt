@@ -18,7 +18,9 @@ set (complex_bessel_VERSION_RELEASE 0)
 # ----------------------------------------------------------------- #
 # -- CMake version and installation directory.
 cmake_minimum_required(VERSION 2.8)
-set (CMAKE_INSTALL_PREFIX /usr)
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set (CMAKE_INSTALL_PREFIX /usr)
+endif()
 
 # -- Compiler config (flags and such)
 enable_language (Fortran)
