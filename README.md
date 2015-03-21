@@ -1,5 +1,7 @@
 complex_bessel
 ==============
+
+[![Join the chat at https://gitter.im/valandil/complex_bessel](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/valandil/complex_bessel?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.11077.png)](http://dx.doi.org/10.5281/zenodo.11077)
 
 A C++ library to evaluate Bessel functions of all kinds. More information can be found on the [website](http://valandil.github.io/complex_bessel).
