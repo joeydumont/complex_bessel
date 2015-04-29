@@ -16,6 +16,9 @@
 #ifndef UTILITIES_H
 #define UTILITIES_H
 
+#include <complex>
+#include <cmath>
+
 namespace sp_bessel {
 
 namespace constants {

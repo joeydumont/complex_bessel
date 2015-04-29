@@ -15,6 +15,8 @@
 #ifndef BESSELFUNCTIONS_H
 #define BESSELFUNCTIONS_H
 
+#include <iostream>
+
 #include "utilities.h"
 #include "fortranLinkage.h"
 
