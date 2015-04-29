@@ -38,7 +38,7 @@ you are ready to install the files, just run
   cd build
   sudo make install
   ```
-The library will be installed to `/usr by default. To change
+The library will be installed to `/usr` by default. To change
 it, you will have to run `cmake` manually like so:
   ```bash
   cmake -DCMAKE_INSTALL_PREFIX=/path/of/install/dir
