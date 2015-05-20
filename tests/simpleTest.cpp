@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 	std::cout << besselYp(2,z) << std::endl;
 	std::cout << besselK(2,z) << std::endl;
 	std::cout << besselKp(2,z,2) << std::endl;
-	std::cout << besselH1(2,z) << std::endl;
-	std::cout << besselH1p(2,z) << std::endl;
+	std::cout << hankelH1(2,z) << std::endl;
+	std::cout << hankelH1p(2,z) << std::endl;
 	return 0;
 }
