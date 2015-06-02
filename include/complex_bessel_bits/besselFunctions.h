@@ -24,8 +24,11 @@ namespace sp_bessel {
   
  /*! @name Evaluation of Bessel functions.
  * We implement Amos' Fortran subroutines in C++.
- * \todo Provide error detection and signaling.  */
+ * \todo Provide error detection and signaling.  
+ */
+
 ///@{
+
 /*! Using a function as a template parameter, we define a function that
  * computes the derivative of the Bessel functions \f$J,\,Y,\,H^{(1,2)},\,I,\,K\f$
  * using the recurrence relations \cite ABR65 (Sects. 9.1.27/9.6.26). */
@@ -34,7 +37,7 @@ inline std::complex<double> diffBessel(double order, std::complex<double> z, int
 {
     // For J, Y, H1 and H2, phase = -1. 
     // For I, e^(order*pi*i)K, phase = 1. 
-    // First term of the serie. 
+    // First term of the series. 
     double p = 1.0;
     std::complex<double> s = T(order-n, z);
 
@@ -225,17 +228,17 @@ inline std::complex<double> besselK(double order, std::complex<double> z)
   zbesk_wrap(zr,zi,nu,kode,N,&cyr,&cyi,&nz,&ierr); // Call Fortran subroutine.
 
   // In passing from C++ to FORTRAN, the exact zero becomes the numerical zero (10^(-14)). 
-    // The limiting form of K_nu(z) for high order, Gamma(nu)/2*(z/2)^(-nu),
-    // leads to product of the form zero*infinity for the imaginary part, which destroys numerical precision. We hence
-    // manually set the imaginary part of the answer to zero is the imaginary part of the input
-    // is zero.
-    if (zi == 0.0 && zr >= 0.0) cyi = 0.0;
-    std::complex<double> answer(cyr,cyi); 
+  // The limiting form of K_nu(z) for high order, Gamma(nu)/2*(z/2)^(-nu),
+  // leads to product of the form zero*infinity for the imaginary part, which destroys numerical precision. We hence
+  // manually set the imaginary part of the answer to zero is the imaginary part of the input
+  // is zero.
+  if (zi == 0.0 && zr >= 0.0) cyi = 0.0;
+  std::complex<double> answer(cyr,cyi); 
 
-    // In case of error, we print the error code.
-    if (ierr!=0) std::cout << "besselK: Error code " << ierr << "." << std::endl;
+  // In case of error, we print the error code.
+  if (ierr!=0) std::cout << "besselK: Error code " << ierr << "." << std::endl;
 
-    return answer;
+  return answer;
 }
 
 inline std::complex<double> expBesselK(double order, std::complex<double> z)
@@ -369,6 +372,6 @@ inline std::complex<double> biryp(std::complex<double> z)
 
 ///@}
 
-}
+} // namespace sp_bessel
 
 #endif // BESSELFUNCTIONS_H

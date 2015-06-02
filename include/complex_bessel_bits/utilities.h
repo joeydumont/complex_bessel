@@ -51,6 +51,6 @@ inline double sin_pi(double nu)
   return std::sin(constants::pi*nu);
 }
 
-}
+} // namespace sp_bessel
 
 #endif // UTILITIES_H

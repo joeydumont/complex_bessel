@@ -1,7 +1,7 @@
 # --------------------------------------------------------------------------- #
 # Author:       Joey Dumont                   <joey.dumont@gmail.com>         #
 # Author:       Denis Gagnon                  <gagnon88@gmail.com>            #
-# Date:         2015-02-26                                                    #
+# Date:         2015-06-01                                                    #
 # Description:  CMake compilation instructions.                               #
 # ----------------------------------------------------------------------------#
 
@@ -31,7 +31,7 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -march=native -std=c++11")
 # --                  Compilation Instructions                   -- #
 # ----------------------------------------------------------------- #
 # -- Included files
-include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include INC_LIST)
+include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # -- Source files
 aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)

@@ -62,6 +62,6 @@ extern void zbiry_wrap(double,double,int,int,double*,double*,int*,int*);
 }
 ///@}
 
-}
+} // namespace sp_bessel
 
 #endif // FORTRANLINKAGE_H
