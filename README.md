@@ -17,6 +17,8 @@ We provide a shared object library and header files to be included.
 
 ## Compilation instructions
 
+Here is a brief overview on how to compile and install the library. Go over to the wiki
+for more detailed compilation instructions.
 The library uses CMake for compilation. The user should thus install CMake
 on their machine. On Ubuntu and other Debian-based OSes, this can be done
 by running
