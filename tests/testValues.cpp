@@ -54,6 +54,7 @@ int main (int argc, char* argv[])
    // Library initilization.
    MPI_Init(&argc, &argv);
    herr_t H5open();
+   std::string filename = argv[1];
 
    // We determine the size and ranks of our process.
    int rank, size;
@@ -71,9 +72,11 @@ int main (int argc, char* argv[])
     indices[idx].push_back(i);
    }
 
-
-   // Open existing file. 
-   hid_t file_id = H5Fopen(argv[1], H5F_ACC_RDONLY, H5P_DEFAULT);
+   // Open existing file.
+   hid_t plist_id;
+   plist_id = H5Pcreate(H5P_FILE_ACCESS);
+   H5Pset_fapl_mpio(plist_id,MPI_COMM_WORLD,MPI_INFO_NULL); 
+   hid_t file_id = H5Fopen(filename.c_str(), H5F_ACC_RDONLY, plist_id);
 
    // We store the name of the datasets we want to open. 
    std::vector<std::string> dataset_names;

@@ -14,7 +14,7 @@
 # -----------------------------------------#
 
 # Change to file directory. 
-cd "$(dirname "$(realpath "$0")")";
+cd "$(dirname "$(readlink "$0")")";
 
 # Check if build/ dir exists. 
 if [ ! -d build ]; then
