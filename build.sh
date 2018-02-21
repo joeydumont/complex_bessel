@@ -17,9 +17,11 @@
 cd "$(dirname "$(readlink "$0")")";
 
 # Check if build/ dir exists. 
-if [ ! -d build ]; then
-    mkdir build
+if [ -d build ]; then
+    rm -rf build
 fi 
+
+mkdir build
 
 # Change to build dir and compile the library.
 cd build
