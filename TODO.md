@@ -1,5 +1,5 @@
 June 2015
- - [✓] Add support for real orders by carefully coding the reflection formulae.
+ - [X] Add support for real orders by carefully coding the reflection formulae.
  - [ ] Add support for real arguments via a static cast
 	from double to complex<double>.
  - [ ] Add support for spherical Bessel functions.
