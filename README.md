@@ -5,7 +5,7 @@ complex_bessel
 [![DOI](https://zenodo.org/badge/5354/valandil/complex_bessel.svg)](https://zenodo.org/badge/latestdoi/5354/valandil/complex_bessel)
 
 A C++ library to evaluate Bessel functions of all kinds. More information can 
-be found on the [website](http://valandil.github.io/complex_bessel).
+be found on the [website](http://joeydumont.github.io/complex_bessel).
 
 ## Introduction
 
