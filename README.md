@@ -5,7 +5,8 @@ complex_bessel
 [![DOI](https://zenodo.org/badge/5354/valandil/complex_bessel.svg)](https://zenodo.org/badge/latestdoi/5354/valandil/complex_bessel)
 
 A C++ library to evaluate Bessel functions of all kinds. More information can 
-be found on the [website](http://valandil.github.io/complex_bessel).
+be found on the [website](http://valandil.github.io/complex_bessel).The link returns
+a 404 Error.
 
 ## Introduction
 
@@ -42,6 +43,13 @@ The library will be installed to `/usr` by default. To change
 it, you will have to run `cmake` manually like so:
   ```bash
   cmake -DCMAKE_INSTALL_PREFIX=/path/of/install/dir
+ ```
+For OSX, I recommend changing -DCMAKE_INSTALL_PREFIX=/usr/local/, since it is
+in your path by default.
+
+## Example to compile code (tested on OSX)
+ ```bash
+  g++ -lcomplex_bessel -o simpleTest.o simpleTest.cpp
  ```
 
 ## Example
