@@ -186,7 +186,7 @@ inline std::complex<double> besselI(double order, std::complex<double> z)
     double s = sin_pi(nu);
 
     // We evaluate the besselK function.
-    int kodeK(1), NK(1), nzK, ierrK;
+    int nzK, ierrK;
     double cyrK, cyiK;
 
     // External function call.
