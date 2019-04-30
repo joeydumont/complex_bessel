@@ -26,7 +26,7 @@ namespace sp_bessel {
 /// Near \f$z\rightarrow0\f$, the floating point division necessary would
 /// destroy precision. We thus use an ascending series to compute sph_besselJ.
 /// See \cite ABR65 Sec. 10.1.2.
-inline std::complex<double> sph_besselJ_asc_series(double order, std::complex<double> z)
+inline std::complex<double> sph_besselJ_asc_series(double, std::complex<double>)
 {
   return 0;
 }
