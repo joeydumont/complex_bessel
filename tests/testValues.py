@@ -27,7 +27,7 @@ import numpy as np
 from mpi4py import MPI
 import h5py
 
-# -- Bessel functions. 
+# -- Bessel functions.
 from scipy.special import jvp, yvp, kvp, ivp
 from scipy.special import h1vp, h2vp
 
@@ -37,7 +37,7 @@ import argparse
 # --------------- Argument Processing ----------------- #
 
 # -- We create the necessary arguments and parse them.
-parser = argparse.ArgumentParser(prog='testBesselValues', 
+parser = argparse.ArgumentParser(prog='testBesselValues',
                                  description="Computes values of the Bessel functions for different orders and arguments.")
 
 parser.add_argument("--filename", help="Name of the file to create.", required=True)
@@ -66,7 +66,7 @@ if (args.pmax+1 != size):
 # -- We open the file and create the datasets.
 f = h5py.File(args.filename, 'w', driver='mpio', comm=MPI.COMM_WORLD)
 
-datasets = [f.create_dataset("besselJ", (args.pmax+1, 2*args.nOrder+1,args.nzr,args.nzi),  dtype=complex), 
+datasets = [f.create_dataset("besselJ", (args.pmax+1, 2*args.nOrder+1,args.nzr,args.nzi),  dtype=complex),
             f.create_dataset("besselY", (args.pmax+1, 2*args.nOrder+1,args.nzr,args.nzi), dtype=complex),
             f.create_dataset("besselI", (args.pmax+1, 2*args.nOrder+1,args.nzr,args.nzi), dtype=complex),
             f.create_dataset("besselK", (args.pmax+1, 2*args.nOrder+1,args.nzr,args.nzi), dtype=complex),

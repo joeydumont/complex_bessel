@@ -6,7 +6,7 @@
  * \brief Definition of the functions computing the Bessel functions.
  *
  * Using the Fortran subroutines, linked to the C language in the
- * file fortranLinkage.h, we define the functions that will be used 
+ * file fortranLinkage.h, we define the functions that will be used
  * to evaluate the Bessel functions and their derivatives.
  *
  * \copyright LGPL
@@ -20,11 +20,13 @@
 #include "utilities.h"
 #include "fortranLinkage.h"
 
+using namespace std::complex_literals;
+
 namespace sp_bessel {
-  
+
  /*! @name Evaluation of Bessel functions.
  * We implement Amos' Fortran subroutines in C++.
- * \todo Provide error detection and signaling.  
+ * \todo Provide error detection and signaling.
  */
 
 ///@{
@@ -35,9 +37,9 @@ namespace sp_bessel {
 template <std::complex<double> (*T)(double, std::complex<double>)>
 inline std::complex<double> diffBessel(double order, std::complex<double> z, int n, double phase)
 {
-    // For J, Y, H1 and H2, phase = -1. 
-    // For I, e^(order*pi*i)K, phase = 1. 
-    // First term of the series. 
+    // For J, Y, H1 and H2, phase = -1.
+    // For I, e^(order*pi*i)K, phase = 1.
+    // First term of the series.
     double p = 1.0;
     std::complex<double> s = T(order-n, z);
 
@@ -92,7 +94,7 @@ inline std::complex<double> besselJ(double order, std::complex<double> z)
     }
 
     // If the return code is not normal, we print the error code.
-    if (ierr!=0) std::cout << "besselJ: Error code " << ierr << "." << std::endl;
+    if (ierr!=0) DEBUG("besselJ: Error code " << ierr << ".");
 
     return answer;
 }
@@ -120,19 +122,19 @@ inline std::complex<double> besselY(double order, std::complex<double> z)
 
     // External function call
     zbesy_wrap(zr,zi,nu,kode,N,&cyr,&cyi,&nz,&cwrkr,&cwrki,&ierr); // Call Fortran subroutine.
-    
-    // In passing from C++ to FORTRAN, the exact zero becomes the numerical zero (10^(-14)). 
+
+    // In passing from C++ to FORTRAN, the exact zero becomes the numerical zero (10^(-14)).
     // The limiting form of Y_nu(z) for high order, -Gamma(nu)/pi*Re(z)^(-nu)*(1-i*nu*Im(z)/Re(z)),
     // leads to product of the form zero*infinity, which destroys numerical precision. We hence
     // manually set the imaginary part of the answer to zero is the imaginary part of the input
-    // is zero. 
+    // is zero.
     if (zi == 0.0 && zr >= 0.0) cyi=0.0;
     std::complex<double> answer(cyr,cyi);                           // Placeholder for output
 
     // If order is negative, we must apply the reflection formula.
     if (order < 0.0)
     {
-      // We prepare the rotation coefficients. 
+      // We prepare the rotation coefficients.
       double c = cos_pi(nu);
       double s = sin_pi(nu);
 
@@ -146,7 +148,7 @@ inline std::complex<double> besselY(double order, std::complex<double> z)
     }
 
     // If the return code is not normal, we print the error code.
-    if (ierr!=0) std::cout << "besselY: Error code " << ierr << "." << std::endl;
+    if (ierr!=0) DEBUG("besselY: Error code " << ierr << ".");
 
     return answer;
 }
@@ -161,7 +163,7 @@ inline std::complex<double> besselYp(double order, std::complex<double> z, int n
  *  orders are equal to the positive ones: \f$I_{-nu}(z)=I_{nu}(z)\f$. */
 inline std::complex<double> besselI(double order, std::complex<double> z)
 {
-  // Input values for Fortran subroutines. 
+  // Input values for Fortran subroutines.
   double zr = std::real(z);
   double zi = std::imag(z);
   double nu = std::abs(order);
@@ -172,7 +174,7 @@ inline std::complex<double> besselI(double order, std::complex<double> z)
   double cyr,cyi;
   int nz, ierr;
 
-  // External function call. 
+  // External function call.
   zbesi_wrap(zr,zi,nu,kode,N,&cyr,&cyi,&nz,&ierr); // Call Fortran subroutine.
 
   // Enforcing some conditions on the output as a function of the output.
@@ -197,8 +199,8 @@ inline std::complex<double> besselI(double order, std::complex<double> z)
     answer += 2.0/constants::pi*s*answerK;
   }
 
-  // In case of error, we print the error code. 
-  if (ierr!=0) std::cout << "besselI: Error code " << ierr << "." << std::endl;
+  // In case of error, we print the error code.
+  if (ierr!=0) DEBUG("besselI: Error code " << ierr << ".");
 
   return answer;
 }
@@ -224,19 +226,19 @@ inline std::complex<double> besselK(double order, std::complex<double> z)
   double cyr, cyi;
   int nz, ierr;
 
-  // External function call. 
+  // External function call.
   zbesk_wrap(zr,zi,nu,kode,N,&cyr,&cyi,&nz,&ierr); // Call Fortran subroutine.
 
-  // In passing from C++ to FORTRAN, the exact zero becomes the numerical zero (10^(-14)). 
+  // In passing from C++ to FORTRAN, the exact zero becomes the numerical zero (10^(-14)).
   // The limiting form of K_nu(z) for high order, Gamma(nu)/2*(z/2)^(-nu),
   // leads to product of the form zero*infinity for the imaginary part, which destroys numerical precision. We hence
   // manually set the imaginary part of the answer to zero is the imaginary part of the input
   // is zero.
   if (zi == 0.0 && zr >= 0.0) cyi = 0.0;
-  std::complex<double> answer(cyr,cyi); 
+  std::complex<double> answer(cyr,cyi);
 
   // In case of error, we print the error code.
-  if (ierr!=0) std::cout << "besselK: Error code " << ierr << "." << std::endl;
+  if (ierr!=0) DEBUG("besselK: Error code " << ierr << ".");
 
   return answer;
 }
@@ -310,6 +312,11 @@ inline std::complex<double> hankelH2(double order, std::complex<double> z)
     if (order < 0.0 )
         answer *= std::exp(-constants::pi*nu*constants::i);
 
+    if (ierr != 0)
+    {
+      DEBUG("zbesh returned an error code of: " << ierr);
+    }
+
     return answer;
 }
 
@@ -332,7 +339,7 @@ inline std::complex<double> airy(std::complex<double> z, int id = 0)
   double air, aii;
   int nz, ierr;
 
-  // External function call. 
+  // External function call.
   zairy_wrap(zr,zi,id,kode,&air,&aii,&nz,&ierr);
   std::complex<double> answer(air,aii);
 
@@ -357,7 +364,7 @@ inline std::complex<double> biry(std::complex<double> z, int id = 0)
   double bir, bii;
   int nz,ierr;
 
-  // External function call. 
+  // External function call.
   zbiry_wrap(zr,zi,id,kode,&bir,&bii,&nz,&ierr);
   std::complex<double> answer(bir,bii);
 
