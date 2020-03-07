@@ -189,7 +189,7 @@ inline std::complex<double> besselI(double order, std::complex<double> z, bool s
   // External function call.
   zbesi_wrap(zr,zi,nu,kode,N,&cyr,&cyi,&nz,&ierr); // Call Fortran subroutine.
 
-  // Enforcing some conditions on the output as a function of the output.,
+  // Enforcing some conditions on the output as a function of the output.
   if (zi == 0.0 && zr >= 0.0) cyi = 0.0;
   std::complex<double> answer(cyr,cyi);
 
@@ -339,9 +339,22 @@ inline std::complex<double> hankelH2(double order, std::complex<double> z, bool 
     double cyr,cyi;
     int nz,ierr;
 
-    // External function call.
-    zbesh_wrap(zr,zi,nu,kode,kind,N,&cyr,&cyi,&nz,&ierr);
-    std::complex<double> answer(cyr,cyi);
+    // If the argument is close to zero, the method of computing the Hankel function
+    // leads to divergences in the real part. We compute the Hankel function by
+    // summing H^(2)_\nu(z) = J_\nu(z) - iY_\nu(z).
+    std::complex<double> answer;
+    bool threshold = order == 0 ? std::abs(z) < 1.0e-10 : std::pow(std::abs(z),1.0/order) < 5.0e-1;
+    if (threshold)
+    {
+      std::cout << "hit threshold: z = " << z << " order = " << order << std::endl;
+      answer = besselJ(order, z) - 1i*besselY(order, z);
+    }
+
+    else {
+      // External function call.
+      zbesh_wrap(zr,zi,nu,kode,kind,N,&cyr,&cyi,&nz,&ierr);
+      answer = cyr + 1i*cyi;
+    }
 
     // Reflection formula if order is negative.
     if (order < 0.0 )

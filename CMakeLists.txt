@@ -44,8 +44,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Configuration for the GCC compiler.
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-  set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  -O3 -Wall -Wextra -pedantic -march=native -mtune=native")
-  set (CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE}    -O3 -Wall -Wextra -pedantic -march=native -mtune=native")
+  set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  -O3 -Wall -march=native -mtune=native")
+  set (CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE}    -O3 -Wall -march=native -mtune=native")
 
   set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -pg -g -Wall -DNDEBUG")
   set (CMAKE_C_FLAGS_DEBUG   "${CMAKE_C_FLAGS_DEBUG}   -O0 -pg -g -Wall -DNDEBUG")
@@ -90,7 +90,10 @@ set_target_properties (
     SOVERSION ${complex_bessel_VERSION_MAJOR}.${complex_bessel_VERSION_MINOR}.${complex_bessel_VERSION_RELEASE}
 )
 
+# Link dependencies
 target_link_libraries (${PROJECT_NAME} ${LIBS})
+
+# Install directories
 install (TARGETS ${PROJECT_NAME} DESTINATION lib)
 
 if (BUILD_STATIC_LIBS)
@@ -124,3 +127,4 @@ if (BUILD_TESTING)
   include(CTest)
   add_subdirectory(tests)
 endif()
+
