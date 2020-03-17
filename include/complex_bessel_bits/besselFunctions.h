@@ -189,14 +189,14 @@ inline std::complex<double> besselI(double order, std::complex<double> z, bool s
   // External function call.
   zbesi_wrap(zr,zi,nu,kode,N,&cyr,&cyi,&nz,&ierr); // Call Fortran subroutine.
 
-  // Enforcing some conditions on the output as a function of the output.
+  // Enforcing some conditions on the output as a function of the output.,
   if (zi == 0.0 && zr >= 0.0) cyi = 0.0;
   std::complex<double> answer(cyr,cyi);
 
   // We apply the reflection formula is order is negative.
   if (order < 0.0 && scale)
   {
-    throw("The scale cannot be applied to a negative order");
+    throw("The scale cannot be applied to a negative order, as the reflection formula involves besselK, which does not share the same scaling behaviour.");
   }
 
   if (order < 0.0)
