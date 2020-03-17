@@ -7,7 +7,7 @@
  *
  * We compute the spherical Bessel functions by evaluating the
  * Bessel functions with half-integer order with D.E. Amos' FORTRAN
- * implementation. 
+ * implementation.
  *
  * \copyright LGPL
  */

@@ -33,21 +33,23 @@ namespace sp_bessel {
 
 /*! Using a function as a template parameter, we define a function that
  * computes the derivative of the Bessel functions \f$J,\,Y,\,H^{(1,2)},\,I,\,K\f$
- * using the recurrence relations \cite ABR65 (Sects. 9.1.27/9.6.26). */
-template <std::complex<double> (*T)(double, std::complex<double>)>
+ * using the recurrence relations \cite ABR65 (Sects. 9.1.27/9.6.26).
+ * We have to compute with scale=0, otherwise the derivative is not valid.
+ */
+template <std::complex<double> (*T)(double, std::complex<double>,bool)>
 inline std::complex<double> diffBessel(double order, std::complex<double> z, int n, double phase)
 {
     // For J, Y, H1 and H2, phase = -1.
     // For I, e^(order*pi*i)K, phase = 1.
     // First term of the series.
     double p = 1.0;
-    std::complex<double> s = T(order-n, z);
+    std::complex<double> s = T(order-n, z,false);
 
     // Rest of the series
     for (int i=1;i<=n;i++)
     {
         p = phase * (p*(n-i+1)) / i; // = choose(n,k).
-        s += p*T(order-n+2*i, z);
+        s += p*T(order-n+2*i, z,false);
     }
 
     return s/std::pow(2.0,n);
@@ -55,13 +57,13 @@ inline std::complex<double> diffBessel(double order, std::complex<double> z, int
 
 /*! Computes the Bessel functions of the first kind with the reflection formula
  * \f$J_{-\nu}(z) = (-1)^\nu J_\nu(z)\f$. \cite ABR65 Sec. 9.1.5. */
-inline std::complex<double> besselJ(double order, std::complex<double> z)
+inline std::complex<double> besselJ(double order, std::complex<double> z, bool scale = false)
 {
     // Input values for Fortran subroutines.
     double zr = std::real(z);
     double zi = std::imag(z);
     double nu = std::abs(order);
-    int kode = 1;
+    int kode = scale + 1;
     int N = 1;
 
     // Output values.
@@ -94,7 +96,10 @@ inline std::complex<double> besselJ(double order, std::complex<double> z)
     }
 
     // If the return code is not normal, we print the error code.
-    if (ierr!=0) DEBUG("besselJ: Error code " << ierr << ".");
+    if (ierr!=0)
+    {
+      DEBUG("besselJ: Error code " << ierr << ".");
+    }
 
     return answer;
 }
@@ -107,13 +112,13 @@ inline std::complex<double> besselJp(double order, std::complex<double> z, int n
 
 /*! Computes the Bessel function of the second kind with the reflection formula
  * \f$Y_{-\nu}(z) = (-1)^\nu Y_\nu(z)\f$ \cite ABR65 Sec 9.1.5. */
-inline std::complex<double> besselY(double order, std::complex<double> z)
+inline std::complex<double> besselY(double order, std::complex<double> z, bool scale = false)
 {
     // Input values for Fortran subroutines
     double zr = std::real(z);
     double zi = std::imag(z);
     double nu = std::abs(order);
-    int kode = 1;
+    int kode = scale + 1;
     int N = 1;
 
     // Output and temporary varibles
@@ -148,7 +153,10 @@ inline std::complex<double> besselY(double order, std::complex<double> z)
     }
 
     // If the return code is not normal, we print the error code.
-    if (ierr!=0) DEBUG("besselY: Error code " << ierr << ".");
+    if (ierr!=0)
+    {
+      DEBUG("besselY: Error code " << ierr << ".");
+    }
 
     return answer;
 }
@@ -160,14 +168,18 @@ inline std::complex<double> besselYp(double order, std::complex<double> z, int n
 }
 
 /*! Computes the modified Bessel function of the first kind. Negative
- *  orders are equal to the positive ones: \f$I_{-nu}(z)=I_{nu}(z)\f$. */
-inline std::complex<double> besselI(double order, std::complex<double> z)
+ *  orders are equal to the positive ones if \nu is an integer.: \f$I_{-n}(z)=I_{n}(z)\f$.
+ *  Otherwise, we have to exploit the relationship:
+ *  \f$K_\nu(z) = \frac{\pi}{2}\frac{I_{-\nu}(z)-I_\nu(z)}{\sin\nu\pi}\f$
+ *  \cite ABR65 \S9.6.2.
+ */
+inline std::complex<double> besselI(double order, std::complex<double> z, bool scale = false)
 {
   // Input values for Fortran subroutines.
   double zr = std::real(z);
   double zi = std::imag(z);
   double nu = std::abs(order);
-  int kode = 1;
+  int kode = scale + 1;
   int N = 1;
 
   // Output and temporary variables.
@@ -182,6 +194,11 @@ inline std::complex<double> besselI(double order, std::complex<double> z)
   std::complex<double> answer(cyr,cyi);
 
   // We apply the reflection formula is order is negative.
+  if (order < 0.0 && scale)
+  {
+    throw("The scale cannot be applied to a negative order");
+  }
+
   if (order < 0.0)
   {
     // We prepare the reflection coefficients.
@@ -200,7 +217,10 @@ inline std::complex<double> besselI(double order, std::complex<double> z)
   }
 
   // In case of error, we print the error code.
-  if (ierr!=0) DEBUG("besselI: Error code " << ierr << ".");
+  if (ierr!=0)
+  {
+    DEBUG("besselI: Error code " << ierr << ".");
+  }
 
   return answer;
 }
@@ -213,13 +233,13 @@ inline std::complex<double> besselIp(double order, std::complex<double> z, int n
 
 /*! Computes the modified Bessel function of the second kind. Negative
  *  orders are equal to the positive ones: \f$K_{-nu}(z)=K_{nu}(z)\f$. */
-inline std::complex<double> besselK(double order, std::complex<double> z)
+inline std::complex<double> besselK(double order, std::complex<double> z, bool scale = false)
 {
   // Input values for Fortran subroutines.
   double zr = std::real(z);
   double zi = std::imag(z);
   double nu = std::abs(order);
-  int kode = 1;
+  int kode = scale + 1;
   int N = 1;
 
   // Output and temporary variables.
@@ -238,14 +258,17 @@ inline std::complex<double> besselK(double order, std::complex<double> z)
   std::complex<double> answer(cyr,cyi);
 
   // In case of error, we print the error code.
-  if (ierr!=0) DEBUG("besselK: Error code " << ierr << ".");
+  if (ierr!=0)
+  {
+    DEBUG("besselK: Error code " << ierr << ".");
+  }
 
   return answer;
 }
 
-inline std::complex<double> expBesselK(double order, std::complex<double> z)
+inline static std::complex<double> expBesselK(double order, std::complex<double> z, bool scale = false)
 {
-    return std::exp(order*constants::pi*constants::i)*besselK(order,z);
+    return std::exp(order*constants::pi*constants::i)*besselK(order,z,false);
 }
 
 /*! Computes the nth derivative of besselK. */
@@ -257,13 +280,13 @@ inline std::complex<double> besselKp(double order, std::complex<double> z, int n
 /*! Computes the Hankel function of the first kind. We also implement
  * the reflection formula \f$H^{(1)}_{-\nu}(z) = H^{(1)}_\nu(z)\exp\left(\pi\nu\imath\right)
  * \f$. */
-inline std::complex<double> hankelH1(double order, std::complex<double> z)
+inline std::complex<double> hankelH1(double order, std::complex<double> z, bool scale = false)
 {
     // Input values.
     double zr = std::real(z);
     double zi = std::imag(z);
     double nu = std::abs(order);
-    int kode = 1;
+    int kode = scale + 1;
     int N = 1;
     int kind = 1;
 
@@ -279,6 +302,11 @@ inline std::complex<double> hankelH1(double order, std::complex<double> z)
     if (order < 0.0)
         answer *= std::exp(constants::pi*nu*constants::i);
 
+    if (ierr != 0)
+    {
+      DEBUG("zbesh returned an error code of: " << ierr);
+    }
+
     return answer;
 }
 
@@ -290,13 +318,13 @@ inline std::complex<double> hankelH1p(double order, std::complex<double> z, int 
 
 /*! Computes the Hankel function of the second kind. We also implement the reflection
  * formula \f$H^{(1)}_{-\nu}(z) = H^{(1)}_\nu(z)\exp\left(-\pi\nu\imath\right)\f$. */
-inline std::complex<double> hankelH2(double order, std::complex<double> z)
+inline std::complex<double> hankelH2(double order, std::complex<double> z, bool scale = false)
 {
 //    // Input values.
     double zr = std::real(z);
     double zi = std::imag(z);
     double nu = std::abs(order);
-    int kode = 1;
+    int kode = scale + 1;
     int N = 1;
     int kind = 2;
 
@@ -328,12 +356,12 @@ inline std::complex<double> hankelH2p(double order, std::complex<double> z, int 
 
 
 /*! Computes the complex Airy Ai(z) function. */
-inline std::complex<double> airy(std::complex<double> z, int id = 0)
+inline std::complex<double> airy(std::complex<double> z, int id = 0, bool scale = false)
 {
   // Input values.
   double zr = std::real(z);
   double zi = std::imag(z);
-  int kode = 1;
+  int kode = scale + 1;
 
   // Output values.
   double air, aii;
@@ -343,22 +371,28 @@ inline std::complex<double> airy(std::complex<double> z, int id = 0)
   zairy_wrap(zr,zi,id,kode,&air,&aii,&nz,&ierr);
   std::complex<double> answer(air,aii);
 
+  if (ierr != 0)
+  {
+    DEBUG("zairy returned an error code of: " << ierr);
+  }
+
+
   return answer;
 }
 
 /*! Computes the first derivative of airy. */
-inline std::complex<double> airyp(std::complex<double> z)
+inline std::complex<double> airyp(std::complex<double> z, bool scale = false)
 {
-  return airy(z,1);
+  return airy(z,1,scale);
 }
 
 // Computes the complex Airy funciton Bi(z). */
-inline std::complex<double> biry(std::complex<double> z, int id = 0)
+inline std::complex<double> biry(std::complex<double> z, int id = 0, bool scale = false)
 {
   // Input values.
   double zr = std::real(z);
   double zi = std::imag(z);
-  int kode = 1;
+  int kode = scale + 1;
 
   // Output values.
   double bir, bii;
@@ -368,13 +402,19 @@ inline std::complex<double> biry(std::complex<double> z, int id = 0)
   zbiry_wrap(zr,zi,id,kode,&bir,&bii,&nz,&ierr);
   std::complex<double> answer(bir,bii);
 
+  if (ierr != 0)
+  {
+    DEBUG("biry returned an error code of: " << ierr);
+  }
+
+
   return answer;
 }
 
 /*! Computes the first derivative of biry. */
-inline std::complex<double> biryp(std::complex<double> z)
+inline std::complex<double> biryp(std::complex<double> z, bool scale = false)
 {
-  return biry(z,1);
+  return biry(z,1,scale);
 }
 
 ///@}
