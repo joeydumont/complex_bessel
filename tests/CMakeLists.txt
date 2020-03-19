@@ -31,3 +31,10 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 target_link_libraries("0011" ${PROJECT_NAME})
 target_link_libraries("0011" ${LIBS})
 add_test(NAME "0011" COMMAND "0011")
+
+# -- Output tests in directory
+add_executable("0012" "0012.cpp")
+include_directories(${CMAKE_SOURCE_DIR}/include)
+target_link_libraries("0012" ${PROJECT_NAME})
+target_link_libraries("0012" ${LIBS})
+add_test(NAME "0012" COMMAND "0012")
