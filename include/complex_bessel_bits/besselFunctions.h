@@ -266,10 +266,17 @@ inline std::complex<double> besselK(double order, std::complex<double> z, bool s
   return answer;
 }
 
+/*! This function is used only when computing the derivative of the BesselK function.
+ *  It cannot be used with scale = true, but we need to provided it to obey the signature
+ *  of diffBessel. We thus set it directly in the function call without using the argument.
+ */
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 inline static std::complex<double> expBesselK(double order, std::complex<double> z, bool scale = false)
 {
     return std::exp(order*constants::pi*constants::i)*besselK(order,z,false);
 }
+#pragma GCC diagnostic pop
 
 /*! Computes the nth derivative of besselK. */
 inline std::complex<double> besselKp(double order, std::complex<double> z, int n=1)

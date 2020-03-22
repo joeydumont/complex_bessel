@@ -94,5 +94,9 @@ int main (void) {
   status = H5Dwrite(dataset, complex_type, H5S_ALL, dataspace, H5P_DEFAULT, hankelH2Values.data());
   status = H5Dwrite(sumDset, complex_type, H5S_ALL, dataspace, H5P_DEFAULT, besselSumValues.data());
 
+  if (status) {
+    std::cout << "There was an error." << std::endl;
+  }
+
   return 0;
 }
