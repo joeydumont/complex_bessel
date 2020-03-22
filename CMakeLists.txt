@@ -10,7 +10,7 @@
 # ----------------------------------------------------------------- #
 project(complex_bessel)
 set (complex_bessel_VERSION_MAJOR 0)
-set (complex_bessel_VERSION_MINOR 6)
+set (complex_bessel_VERSION_MINOR 7)
 set (complex_bessel_VERSION_RELEASE 0)
 
 # ----------------------------------------------------------------- #
@@ -21,6 +21,9 @@ cmake_minimum_required(VERSION 2.8)
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set (CMAKE_INSTALL_PREFIX /usr)
 endif()
+
+option(BUILD_STATIC_LIBS "Builds static libraries as well as shared libraries" OFF)
+option(BUILD_TESTING "Build the testing tree" OFF)
 
 # ----------------------------------------------------------------- #
 # --                    Compiler Configuration                   -- #
@@ -87,19 +90,37 @@ set_target_properties (
     SOVERSION ${complex_bessel_VERSION_MAJOR}.${complex_bessel_VERSION_MINOR}.${complex_bessel_VERSION_RELEASE}
 )
 
-add_library(${PROJECT_NAME}_static STATIC
-  ${SRC_LIST}
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/amos_iso_c_fortran_wrapper.f90"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/zbesh.for"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/machine.for")
-
-# Link dependencies
 target_link_libraries (${PROJECT_NAME} ${LIBS})
-target_link_libraries (${PROJECT_NAME}_static ${LIBS})
-
-# Install directories
 install (TARGETS ${PROJECT_NAME} DESTINATION lib)
+
+if (BUILD_STATIC_LIBS)
+  add_library(${PROJECT_NAME}_static STATIC
+    ${SRC_LIST}
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/amos_iso_c_fortran_wrapper.f90"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/zbesh.for"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/machine.for")
+
+  set_target_properties(
+    ${PROJECT_NAME}_static
+    PROPERTIES
+      VERSION ${complex_bessel_VERSION_MAJOR}.${complex_bessel_VERSION_MINOR}.${complex_bessel_VERSION_RELEASE}
+  )
+
+  # Link dependencies
+  target_link_libraries (${PROJECT_NAME}_static ${LIBS})
+
+  install (TARGETS ${PROJECT_NAME}_static DESTINATION lib)
+
+endif()
+
+# Install includes
 install (DIRECTORY include/ DESTINATION include)
 
-include(CTest)
-add_subdirectory(tests)
+# ----------------------------------------------------------------- #
+# --                    Testing Infrastructure                   -- #
+# ----------------------------------------------------------------- #
+
+if (BUILD_TESTING)
+  include(CTest)
+  add_subdirectory(tests)
+endif()
