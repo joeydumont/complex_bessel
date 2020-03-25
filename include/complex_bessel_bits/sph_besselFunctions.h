@@ -7,7 +7,7 @@
  *
  * We compute the spherical Bessel functions by evaluating the
  * Bessel functions with half-integer order with D.E. Amos' FORTRAN
- * implementation. 
+ * implementation.
  *
  * \copyright LGPL
  */
@@ -26,10 +26,10 @@ namespace sp_bessel {
 /// Near \f$z\rightarrow0\f$, the floating point division necessary would
 /// destroy precision. We thus use an ascending series to compute sph_besselJ.
 /// See \cite ABR65 Sec. 10.1.2.
-inline std::complex<double> sph_besselJ_asc_series(double, std::complex<double>)
-{
-  return 0;
-}
+//inline std::complex<double> sph_besselJ_asc_series(double order, std::complex<double> z)
+//{
+//  return 0;
+//}
 
 /// We compute the spherical Bessel function of the first kind.
 inline std::complex<double> sph_besselJ(double order, std::complex<double> z)

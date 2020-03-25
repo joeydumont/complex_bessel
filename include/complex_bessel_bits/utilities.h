@@ -5,7 +5,7 @@
  *
  * \brief Definition of some useful constants and functions.
  *
- * We encapsulate some global constants in a namespace 
+ * We encapsulate some global constants in a namespace
  * specific to the library and define some functions that
  * are of use in the evaluation of Bessel functions, but are
  * not direclty related to it.
@@ -15,6 +15,12 @@
 
 #ifndef UTILITIES_H
 #define UTILITIES_H
+
+#ifdef CB_DEBUG
+  #define DEBUG(x) do { std::cout  << x << std:endl;} while(0)
+#else
+  #define DEBUG(x)
+#endif
 
 #include <complex>
 #include <cmath>

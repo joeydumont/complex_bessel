@@ -1,5 +1,9 @@
-tests/
 build/
+*.hdf5
+*.h5
+*.dat
+*.png
+*.pdf
 
 # http://www.gnu.org/software/automake
 

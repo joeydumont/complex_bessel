@@ -10,7 +10,7 @@
 # ----------------------------------------------------------------- #
 project(complex_bessel)
 set (complex_bessel_VERSION_MAJOR 0)
-set (complex_bessel_VERSION_MINOR 6)
+set (complex_bessel_VERSION_MINOR 7)
 set (complex_bessel_VERSION_RELEASE 0)
 
 # ----------------------------------------------------------------- #
@@ -22,10 +22,48 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set (CMAKE_INSTALL_PREFIX /usr)
 endif()
 
+option(BUILD_STATIC_LIBS "Builds static libraries as well as shared libraries" OFF)
+option(BUILD_TESTING "Build the testing tree" OFF)
+
+# ----------------------------------------------------------------- #
+# --                    Compiler Configuration                   -- #
+# ----------------------------------------------------------------- #
+
 # -- Compiler config (flags and such)
 enable_language (Fortran)
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall -march=native")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -march=native -std=c++11")
+
+# -- Default build type
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif(NOT CMAKE_BUILD_TYPE)
+
+# C++14 Standard required
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Configuration for the GCC compiler.
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+  set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  -O3 -Wall -Wextra -pedantic -march=native -mtune=native")
+  set (CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE}    -O3 -Wall -Wextra -pedantic -march=native -mtune=native")
+
+  set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -pg -g -Wall -DNDEBUG")
+  set (CMAKE_C_FLAGS_DEBUG   "${CMAKE_C_FLAGS_DEBUG}   -O0 -pg -g -Wall -DNDEBUG")
+
+  set (CMAKE_C_FLAGS_RELWITHDEBINFO   "${CMAKE_C_FLAGS_RELWITHDEBINFO}   -Wall -pg -O3 -DNDEBUG")
+  set (CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -Wall -pg -O3 -DNDEBUG")
+
+# Configuration for the Intel compiler.
+elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
+  set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  -O3")
+  set (CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE}    -O3")
+
+  set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -debug all")
+  set (CMAKE_C_FLAGS_DEBUG   "${CMAKE_C_FLAGS_DEBUG}   -O0 -g -debug all")
+
+  set (CMAKE_C_FLAGS_RELWITHDEBINFO   "${CMAKE_C_FLAGS_RELWITHDEBINFO}   -O3 -g -debug all")
+  set (CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O3 -g -debug all")
+endif()
 
 # ----------------------------------------------------------------- #
 # --                  Compilation Instructions                   -- #
@@ -37,7 +75,7 @@ include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
 aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
 
 # -- Build a shared library
-add_library(${PROJECT_NAME} SHARED 
+add_library(${PROJECT_NAME} SHARED
   ${SRC_LIST}
   "${CMAKE_CURRENT_SOURCE_DIR}/src/amos_iso_c_fortran_wrapper.f90"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/zbesh.for"
@@ -52,23 +90,37 @@ set_target_properties (
     SOVERSION ${complex_bessel_VERSION_MAJOR}.${complex_bessel_VERSION_MINOR}.${complex_bessel_VERSION_RELEASE}
 )
 
-# Link dependencies
 target_link_libraries (${PROJECT_NAME} ${LIBS})
-
-# Install directories
 install (TARGETS ${PROJECT_NAME} DESTINATION lib)
+
+if (BUILD_STATIC_LIBS)
+  add_library(${PROJECT_NAME}_static STATIC
+    ${SRC_LIST}
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/amos_iso_c_fortran_wrapper.f90"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/zbesh.for"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/machine.for")
+
+  set_target_properties(
+    ${PROJECT_NAME}_static
+    PROPERTIES
+      VERSION ${complex_bessel_VERSION_MAJOR}.${complex_bessel_VERSION_MINOR}.${complex_bessel_VERSION_RELEASE}
+  )
+
+  # Link dependencies
+  target_link_libraries (${PROJECT_NAME}_static ${LIBS})
+
+  install (TARGETS ${PROJECT_NAME}_static DESTINATION lib)
+
+endif()
+
+# Install includes
 install (DIRECTORY include/ DESTINATION include)
 
 # ----------------------------------------------------------------- #
-# --                   Generate Documentation                    -- #
+# --                    Testing Infrastructure                   -- #
 # ----------------------------------------------------------------- #
-# add a target to generate API documentation with Doxygen
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-add_custom_target(
-  doc ALL ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMENT "Generating API documentation with Doxygen" VERBATIM
-)
-endif(DOXYGEN_FOUND)
+
+if (BUILD_TESTING)
+  include(CTest)
+  add_subdirectory(tests)
+endif()
