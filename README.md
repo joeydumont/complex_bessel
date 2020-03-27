@@ -43,6 +43,16 @@ it, you will have to run `cmake` manually like so:
   ```bash
   cmake -DCMAKE_INSTALL_PREFIX=/path/of/install/dir
  ```
+ 
+ ## Other similar libraries
+ 
+ The FORTRAN library that is used as the main driver for the computation of Bessel functions is also used in
+   * [`scipy.special`](https://docs.scipy.org/doc/scipy/reference/special.html)
+   * MATLAB
+   
+[Boost](https://www.boost.org/doc/libs/1_72_0/libs/math/doc/html/math_toolkit/bessel/bessel_first.html) has its own implementation of the Bessel functions, but only supports real values for the argument.
+
+If arbitrary precision is needed, the [`arb`](http://arblib.org/acb_hypgeom.html#bessel-functions) library supports the computation of many special functions, including Bessel functions.
 
 ## Example
 ![Contours of Hankel function](/tests/contours.png)
