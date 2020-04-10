@@ -17,7 +17,7 @@
 #define UTILITIES_H
 
 #ifdef CB_DEBUG
-  #define DEBUG(x) do { std::cout  << x << std:endl;} while(0)
+  #define DEBUG(x) do { std::cout  << x << std::endl;} while(0)
 #else
   #define DEBUG(x)
 #endif

@@ -161,10 +161,11 @@ C     COMPLEX CY,Z,ZN,ZT,CSGN
       DOUBLE PRECISION AA, ALIM, ALN, ARG, AZ, CYI, CYR, DIG, ELIM,
      * FMM, FN, FNU, FNUL, HPI, RHPI, RL, R1M5, SGN, STR, TOL, UFL, ZI,
      * ZNI, ZNR, ZR, ZTI, D1MACH, ZABS, BB, ASCLE, RTOL, ATOL, STI,
-     * CSGNR, CSGNI
+     * CSGNR, CSGNI, 
+     * CRJTMP, CIJTMP, CRYTMP, CIYTMP, CRYWORK, CIYWORK
       INTEGER I, IERR, INU, INUH, IR, K, KODE, K1, K2, M,
      * MM, MR, N, NN, NUF, NW, NZ, I1MACH
-      DIMENSION CYR(N), CYI(N)
+      DIMENSION CYR(N), CYI(N), CRYWORK(N), CIYWORK(N)
 C
       DATA HPI /1.57079632679489662D0/
 C
@@ -235,7 +236,7 @@ C-----------------------------------------------------------------------
    60 CONTINUE
       CALL ZUOIK(ZNR, ZNI, FNU, KODE, 2, NN, CYR, CYI, NUF, TOL, ELIM,
      * ALIM)
-      IF (NUF.LT.0) GO TO 230
+      IF (NUF.LT.0) GO TO 250
       NZ = NZ + NUF
       NN = NN - NUF
 C-----------------------------------------------------------------------
@@ -342,6 +343,13 @@ C       ZNR = STR
       IF(NW.EQ.(-1)) GO TO 230
       NZ=0
       IERR=5
+      RETURN
+  250 CONTINUE
+      CALL ZBESJ(ZR, ZI, FNU, KODE, N, CRJTMP, CIJTMP, NZ, IERR)
+      CALL ZBESY(ZR, ZI, FNU, KODE, N, CRYTMP, CIYTMP, NZ, CRYWORK, CIYWORK,
+     *      IERR)
+      CYR = CRJTMP + FMM * CRYTMP
+      CYI = CIJTMP + FMM * CIYTMP
       RETURN
   260 CONTINUE
       NZ=0

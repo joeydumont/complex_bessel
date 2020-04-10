@@ -8,7 +8,7 @@ using namespace std::complex_literals;
 using namespace sp_bessel;
 
 static constexpr int size = 1000;
-static constexpr int nu_max = 500;
+static constexpr int nu_max = 100;
 static constexpr double exp_min = -15;
 static constexpr double exp_max = 0;
 static constexpr double dx = (exp_max-exp_min)/size;

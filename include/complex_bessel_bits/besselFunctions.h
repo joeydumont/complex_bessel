@@ -343,7 +343,8 @@ inline std::complex<double> hankelH2(double order, std::complex<double> z, bool 
     // leads to divergences in the real part. We compute the Hankel function by
     // summing H^(2)_\nu(z) = J_\nu(z) - iY_\nu(z).
     std::complex<double> answer;
-    bool threshold = order == 0 ? std::abs(z) < 1.0e-10 : std::pow(std::abs(z),1.0/order) < 5.0e-1;
+    //bool threshold = order == 0 ? std::abs(z) < 1.0e-10 : std::pow(std::abs(z),1.0/order) < 5.0e-1;
+    bool threshold = false;
     if (threshold)
     {
       std::cout << "hit threshold: z = " << z << " order = " << order << std::endl;
