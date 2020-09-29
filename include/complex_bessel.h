@@ -7,7 +7,7 @@
  * \author Denis Gagnon <gagnon88@gmail.com>
  *
  * \date 2014-01-13
- * 
+ *
  * \since 2012-09-07
  *
  * \brief Header file that includes the library headers.
@@ -20,6 +20,7 @@
  * \copyright LGPL.
  */
 
+#include "complex_bessel_bits/errors.h"
 #include "complex_bessel_bits/fortranLinkage.h"
 #include "complex_bessel_bits/utilities.h"
 #include "complex_bessel_bits/besselFunctions.h"
