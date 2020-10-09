@@ -16,6 +16,7 @@
 #define BESSELFUNCTIONS_H
 
 #include <iostream>
+#include <vector>
 
 #include "errors.h"
 #include "utilities.h"
@@ -37,21 +38,33 @@ namespace sp_bessel {
  * using the recurrence relations \cite ABR65 (Sects. 9.1.27/9.6.26).
  * We have to compute with scale=0, otherwise the derivative is not valid.
  */
-// TODO: Better error handling for diffBessel.
 template <std::complex<double> (*T)(double, std::complex<double>,bool,BesselErrors*)>
-inline std::complex<double> diffBessel(double order, std::complex<double> z, int n, double phase)
+inline std::complex<double> diffBessel(double order, std::complex<double> z, int n, double phase, std::vector<BesselErrors> * errors = nullptr)
 {
     // For J, Y, H1 and H2, phase = -1.
     // For I, e^(order*pi*i)K, phase = 1.
     // First term of the series.
     double p = 1.0;
-    std::complex<double> s = T(order-n,z,false,nullptr);
+
+    // Error handling.
+    if (errors)
+    {
+      (*errors).push_back(BesselErrors());
+    }
+    std::complex<double> s = T(order-n,z,false, errors ? &(*errors).back() : nullptr );
+
 
     // Rest of the series
     for (int i=1;i<=n;i++)
     {
         p = phase * (p*(n-i+1)) / i; // = choose(n,k).
-        s += p*T(order-n+2*i,z,false,nullptr);
+
+        if (errors)
+        {
+          (*errors).push_back(BesselErrors());
+        }
+
+        s += p*T(order-n+2*i,z,false, errors ? &(*errors).back() : nullptr);
     }
 
     return s/std::pow(2.0,n);
@@ -107,9 +120,9 @@ inline std::complex<double> besselJ(double order, std::complex<double> z, bool s
 }
 
 /*! Computes the nth derivative of besselJ. */
-inline std::complex<double> besselJp(double order, std::complex<double> z, int n=1)
+inline std::complex<double> besselJp(double order, std::complex<double> z, int n=1, std::vector<BesselErrors> * errors = nullptr)
 {
-  return diffBessel<besselJ>(order, z, n, -1);
+  return diffBessel<besselJ>(order, z, n, -1, errors);
 }
 
 /*! Computes the Bessel function of the second kind with the reflection formula
@@ -164,9 +177,9 @@ inline std::complex<double> besselY(double order, std::complex<double> z, bool s
 }
 
 /*! Computes the nth derivative of besselY. */
-inline std::complex<double> besselYp(double order, std::complex<double> z, int n=1)
+inline std::complex<double> besselYp(double order, std::complex<double> z, int n=1, std::vector<BesselErrors> * errors = nullptr)
 {
-  return diffBessel<besselY>(order, z, n, -1);
+  return diffBessel<besselY>(order, z, n, -1, errors);
 }
 
 /*! Computes the modified Bessel function of the first kind. Negative
@@ -228,9 +241,9 @@ inline std::complex<double> besselI(double order, std::complex<double> z, bool s
 }
 
 /*! Computes the nth derivative of besselI. */
-inline std::complex<double> besselIp(double order, std::complex<double> z, int n=1)
+inline std::complex<double> besselIp(double order, std::complex<double> z, int n=1, std::vector<BesselErrors> * errors = nullptr)
 {
-  return diffBessel<besselI>(order, z, n, 1);
+  return diffBessel<besselI>(order, z, n, 1, errors);
 }
 
 /*! Computes the modified Bessel function of the second kind. Negative
@@ -269,22 +282,21 @@ inline std::complex<double> besselK(double order, std::complex<double> z, bool s
 }
 
 /*! This function is used only when computing the derivative of the BesselK function.
- *  It cannot be used with scale = true, but we need to provided it to obey the signature
+ *  It cannot be used with scale = true, but we need to provide it to obey the signature
  *  of diffBessel. We thus set it directly in the function call without using the argument.
- *  Same goes for errors.
  */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 inline static std::complex<double> expBesselK(double order, std::complex<double> z, bool scale = false,BesselErrors *error = nullptr)
 {
-    return std::exp(order*constants::pi*constants::i)*besselK(order,z,false,nullptr);
+    return std::exp(order*constants::pi*constants::i)*besselK(order,z,false,error);
 }
 #pragma GCC diagnostic pop
 
 /*! Computes the nth derivative of besselK. */
-inline std::complex<double> besselKp(double order, std::complex<double> z, int n=1)
+inline std::complex<double> besselKp(double order, std::complex<double> z, int n=1, std::vector<BesselErrors> * errors = nullptr)
 {
-  return std::exp(-order*constants::pi*constants::i)*diffBessel<expBesselK>(order, z, n, 1);
+  return std::exp(-order*constants::pi*constants::i)*diffBessel<expBesselK>(order, z, n, 1, errors);
 }
 
 /*! Computes the Hankel function of the first kind. We also implement
@@ -322,9 +334,9 @@ inline std::complex<double> hankelH1(double order, std::complex<double> z, bool 
 }
 
 /*! Computes the nth derivative of hankelH1. */
-inline std::complex<double> hankelH1p(double order, std::complex<double> z, int n=1)
+inline std::complex<double> hankelH1p(double order, std::complex<double> z, int n=1, std::vector<BesselErrors> * errors = nullptr)
 {
-  return diffBessel<hankelH1>(order, z, n, -1);
+  return diffBessel<hankelH1>(order, z, n, -1, errors);
 }
 
 /*! Computes the Hankel function of the second kind. We also implement the reflection
@@ -361,9 +373,9 @@ inline std::complex<double> hankelH2(double order, std::complex<double> z, bool 
 }
 
 /*! Computes the nth derivative of hankelH2.*/
-inline std::complex<double> hankelH2p(double order, std::complex<double> z, int n=1)
+inline std::complex<double> hankelH2p(double order, std::complex<double> z, int n=1, std::vector<BesselErrors> * errors = nullptr)
 {
-  return diffBessel<hankelH2>(order, z, n, -1);
+  return diffBessel<hankelH2>(order, z, n, -1, errors);
 }
 
 
@@ -393,9 +405,9 @@ inline std::complex<double> airy(std::complex<double> z, int id = 0, bool scale 
 }
 
 /*! Computes the first derivative of airy. */
-inline std::complex<double> airyp(std::complex<double> z, bool scale = false)
+inline std::complex<double> airyp(std::complex<double> z, bool scale = false, BesselErrors *error = nullptr)
 {
-  return airy(z,1,scale);
+  return airy(z,1,scale,error);
 }
 
 // Computes the complex Airy funciton Bi(z). */
@@ -426,9 +438,9 @@ inline std::complex<double> biry(std::complex<double> z, int id = 0, bool scale 
 }
 
 /*! Computes the first derivative of biry. */
-inline std::complex<double> biryp(std::complex<double> z, bool scale = false)
+inline std::complex<double> biryp(std::complex<double> z, bool scale = false, BesselErrors * error = nullptr)
 {
-  return biry(z,1,scale);
+  return biry(z,1,scale,error);
 }
 
 ///@}

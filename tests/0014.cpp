@@ -1,6 +1,7 @@
 #include <complex_bessel.h>
 #include <gtest/gtest.h>
 #include <iostream>
+#include <vector>
 
 using namespace std::complex_literals;
 using namespace sp_bessel;
@@ -11,6 +12,7 @@ public:
   }
 
   BesselErrors besselErrors;
+  std::vector<BesselErrors> besselErrors_vec;
 
 protected:
   void SetUp() override {}
@@ -51,6 +53,12 @@ TEST_F(BesselErrorsTest, AllFunctionsSuccess) {
   biry(z, 0, false, &besselErrors);
   EXPECT_EQ(0, besselErrors.errorCode);
   EXPECT_EQ("Normal return        -- Computation completed.", besselErrors.errorMessage);
+
+  besselJp(0, z, 1, &besselErrors_vec);
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(0, element.errorCode);
+  }
 }
 
 TEST_F(BesselErrorsTest, besselJOverflow) {
@@ -61,12 +69,35 @@ TEST_F(BesselErrorsTest, besselJOverflow) {
   EXPECT_EQ("Overflow             -- No computation, Im(z) too large for scale=false", besselErrors.errorMessage);
 }
 
+TEST_F(BesselErrorsTest, besselJpOverflow) {
+  auto z = std::complex<double>(1000.0,1000.0);
+
+  besselJp(0, z, 1, &besselErrors_vec);
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(2, element.errorCode);
+    EXPECT_EQ("Overflow             -- No computation, Im(z) too large for scale=false", element.errorMessage);
+  }
+}
+
 TEST_F(BesselErrorsTest, besselJPartialLossOfSignificance) {
   auto z = std::complex<double>(35000.0,0.0);
 
   besselJ(0, z, false, &besselErrors);
   EXPECT_EQ(3, besselErrors.errorCode);
   EXPECT_EQ("Loss of significance -- abs(z) or order large \n computation done but losses of significance by argument reduction produce less than half of machine accuracy", besselErrors.errorMessage);
+}
+
+TEST_F(BesselErrorsTest, besselJpPartialLossOfSignificance) {
+  auto z = std::complex<double>(35000.0,0.0);
+
+  besselJp(0, z, 1, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(3, element.errorCode);
+    EXPECT_EQ("Loss of significance -- abs(z) or order large \n computation done but losses of significance by argument reduction produce less than half of machine accuracy", element.errorMessage);
+  }
 }
 
 TEST_F(BesselErrorsTest, besselJFulllLossOfSignificance) {
@@ -77,10 +108,22 @@ TEST_F(BesselErrorsTest, besselJFulllLossOfSignificance) {
   EXPECT_EQ("Loss of significance -- abs(z) or order too large\n no computation because of complete loss of significance by argument reduction", besselErrors.errorMessage);
 }
 
+TEST_F(BesselErrorsTest, besselJpFulllLossOfSignificance) {
+  auto z = std::complex<double>(1'500'000'000.0,0.0);
+
+  besselJp(0, z, 1, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(4, element.errorCode);
+    EXPECT_EQ("Loss of significance -- abs(z) or order too large\n no computation because of complete loss of significance by argument reduction", element.errorMessage);
+  }
+}
+
 // Not sure how to trigger this error...
 // TEST_F(BesselErrorsTest, besselJAlgorithmTermination) {
 //   auto z = std::complex<double>(1'500'000'000.0,0.0);
-// 
+//
 //   besselJ(0, z, false, &besselErrors);
 //   EXPECT_EQ(5, besselErrors.errorCode);
 //   EXPECT_EQ("Error                -- no computation, algorithm termination condition not met", besselErrors.errorMessage);
@@ -93,16 +136,51 @@ TEST_F(BesselErrorsTest, besselYOverflow) {
   EXPECT_EQ("Overflow             -- No computation, order is too large or abs(z) is too small or both", besselErrors.errorMessage);
 }
 
+TEST_F(BesselErrorsTest, besselYpOverflow) {
+  auto z = std::complex<double>(10.0,10.0);
+  besselYp(300,z,1,&besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(2, element.errorCode);
+    EXPECT_EQ("Overflow             -- No computation, order is too large or abs(z) is too small or both", element.errorMessage);
+  }
+}
+
 TEST_F(BesselErrorsTest, besselYPartialLossOfSignificance) {
   auto z = std::complex<double>(35'000.0,0.0);
   besselY(0, z, false, &besselErrors);
   EXPECT_EQ(3, besselErrors.errorCode);
+  EXPECT_EQ("Loss of significance -- abs(z) or order large \n computation done but losses of significance by argument reduction produce less than half of machine accuracy", besselErrors.errorMessage);
+}
+
+TEST_F(BesselErrorsTest, besselYpPartialLossOfSignificance) {
+  auto z = std::complex<double>(35'000.0,0.0);
+  besselYp(0, z, 1, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(3, besselErrors.errorCode);
+    EXPECT_EQ("Loss of significance -- abs(z) or order large \n computation done but losses of significance by argument reduction produce less than half of machine accuracy", element.errorMessage);
+  }
 }
 
 TEST_F(BesselErrorsTest, besselYFullLossOfSignificance) {
   auto z = std::complex<double>(1'500'000'000.0,0.0);
   besselY(0, z, false, &besselErrors);
   EXPECT_EQ(4, besselErrors.errorCode);
+  EXPECT_EQ("Loss of significance -- abs(z) or order too large\n no computation because of complete loss of significance by argument reduction", besselErrors.errorMessage);
+}
+
+TEST_F(BesselErrorsTest, besselYpFullLossOfSignificance) {
+  auto z = std::complex<double>(1'500'000'000.0,0.0);
+  besselYp(0, z, 1, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(4, element.errorCode);
+    EXPECT_EQ("Loss of significance -- abs(z) or order too large\n no computation because of complete loss of significance by argument reduction", element.errorMessage);
+  }
 }
 
 // Not sure how to trigger this error...
@@ -121,6 +199,17 @@ TEST_F(BesselErrorsTest, besselIOverflow) {
   EXPECT_EQ("Overflow             -- No computation, Re(z) too large for scale=false", besselErrors.errorMessage);
 }
 
+TEST_F(BesselErrorsTest, besselIpOverflow) {
+  auto z = std::complex<double>(1'000.0,10.0);
+  besselIp(0, z, 1, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(2, element.errorCode);
+    EXPECT_EQ("Overflow             -- No computation, Re(z) too large for scale=false", element.errorMessage);
+  }
+}
+
 TEST_F(BesselErrorsTest, besselIPartialLossOfSignificance) {
   auto z = std::complex<double>(0.0,35'000.0);
   besselI(0, z, false, &besselErrors);
@@ -128,11 +217,33 @@ TEST_F(BesselErrorsTest, besselIPartialLossOfSignificance) {
   EXPECT_EQ("Loss of significance -- abs(z) or order large \n computation done but losses of significance by argument reduction produce less than half of machine accuracy", besselErrors.errorMessage);
 }
 
+TEST_F(BesselErrorsTest, besselIpPartialLossOfSignificance) {
+  auto z = std::complex<double>(0.0,35'000.0);
+  besselIp(0, z, 1, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(3, element.errorCode);
+    EXPECT_EQ("Loss of significance -- abs(z) or order large \n computation done but losses of significance by argument reduction produce less than half of machine accuracy", element.errorMessage);
+  }
+}
+
 TEST_F(BesselErrorsTest, besselIFullLossOfSignificance) {
   auto z = std::complex<double>(0.0,1'500'000'000.0);
   besselI(0, z, false, &besselErrors);
   EXPECT_EQ(4, besselErrors.errorCode);
   EXPECT_EQ("Loss of significance -- abs(z) or order too large\n no computation because of complete loss of significance by argument reduction", besselErrors.errorMessage);
+}
+
+TEST_F(BesselErrorsTest, besselIpFullLossOfSignificance) {
+  auto z = std::complex<double>(0.0,1'500'000'000.0);
+  besselIp(0, z, 1, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(4, element.errorCode);
+    EXPECT_EQ("Loss of significance -- abs(z) or order too large\n no computation because of complete loss of significance by argument reduction", element.errorMessage);
+  }
 }
 
 // Not sure how to trigger this error...
@@ -151,6 +262,17 @@ TEST_F(BesselErrorsTest, besselKOverflow) {
   EXPECT_EQ("Overflow             -- No computation, order is too large or abs(z) is too small or both", besselErrors.errorMessage);
 }
 
+TEST_F(BesselErrorsTest, besselKpOverflow) {
+  auto z = std::complex<double>(10.0,10.0);
+  besselKp(300, z, false, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(2, element.errorCode);
+    EXPECT_EQ("Overflow             -- No computation, order is too large or abs(z) is too small or both", element.errorMessage);
+  }
+}
+
 TEST_F(BesselErrorsTest, besselKPartialLossOfSignificance) {
   auto z = std::complex<double>(35'000.0,0.0);
   besselK(0, z, false, &besselErrors);
@@ -158,11 +280,33 @@ TEST_F(BesselErrorsTest, besselKPartialLossOfSignificance) {
   EXPECT_EQ("Loss of significance -- abs(z) or order large \n computation done but losses of significance by argument reduction produce less than half of machine accuracy", besselErrors.errorMessage);
 }
 
+TEST_F(BesselErrorsTest, besselKpPartialLossOfSignificance) {
+  auto z = std::complex<double>(35'000.0,0.0);
+  besselKp(0, z, false, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(3, element.errorCode);
+    EXPECT_EQ("Loss of significance -- abs(z) or order large \n computation done but losses of significance by argument reduction produce less than half of machine accuracy", element.errorMessage);
+  }
+}
+
 TEST_F(BesselErrorsTest, besselKFullLossOfSignificance) {
   auto z = std::complex<double>(1'500'000'000.0,0.0);
-  besselI(0, z, false, &besselErrors);
+  besselK(0, z, false, &besselErrors);
   EXPECT_EQ(4, besselErrors.errorCode);
   EXPECT_EQ("Loss of significance -- abs(z) or order too large\n no computation because of complete loss of significance by argument reduction", besselErrors.errorMessage);
+}
+
+TEST_F(BesselErrorsTest, besselKpFullLossOfSignificance) {
+  auto z = std::complex<double>(1'500'000'000.0,0.0);
+  besselKp(0, z, false, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(4, element.errorCode);
+    EXPECT_EQ("Loss of significance -- abs(z) or order too large\n no computation because of complete loss of significance by argument reduction", element.errorMessage);
+  }
 }
 
 // Not sure how to trigger this error...
@@ -181,11 +325,33 @@ TEST_F(BesselErrorsTest, hankelH1Overflow) {
   EXPECT_EQ("Overflow             -- No computation, order is too large or abs(z) too small or both", besselErrors.errorMessage);
 }
 
+TEST_F(BesselErrorsTest, hankelH1pOverflow) {
+  auto z = std::complex<double>(10.0,10.0);
+  hankelH1p(300, z, false, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(2, element.errorCode);
+    EXPECT_EQ("Overflow             -- No computation, order is too large or abs(z) too small or both", element.errorMessage);
+  }
+}
+
 TEST_F(BesselErrorsTest, hankelH1PartialLossOfSignificance) {
   auto z = std::complex<double>(35'000.0,0.0);
   hankelH1(0, z, false, &besselErrors);
   EXPECT_EQ(3, besselErrors.errorCode);
   EXPECT_EQ("Loss of significance -- abs(z) or order large \n computation done but losses of significance by argument reduction produce less than half of machine accuracy", besselErrors.errorMessage);
+}
+
+TEST_F(BesselErrorsTest, hankelH1pPartialLossOfSignificance) {
+  auto z = std::complex<double>(35'000.0,0.0);
+  hankelH1p(0, z, false, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(3, element.errorCode);
+    EXPECT_EQ("Loss of significance -- abs(z) or order large \n computation done but losses of significance by argument reduction produce less than half of machine accuracy", element.errorMessage);
+  }
 }
 
 TEST_F(BesselErrorsTest, hankelH1FullLossOfSignificance) {
@@ -194,6 +360,18 @@ TEST_F(BesselErrorsTest, hankelH1FullLossOfSignificance) {
   EXPECT_EQ(4, besselErrors.errorCode);
   EXPECT_EQ("Loss of significance -- abs(z) or order too large\n no computation because of complete loss of significance by argument reduction", besselErrors.errorMessage);
 }
+
+TEST_F(BesselErrorsTest, hankelH1pFullLossOfSignificance) {
+  auto z = std::complex<double>(1'500'000'000.0,0.0);
+  hankelH1p(0, z, false, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(4, element.errorCode);
+    EXPECT_EQ("Loss of significance -- abs(z) or order too large\n no computation because of complete loss of significance by argument reduction", element.errorMessage);
+  }
+}
+
 
 // Not sure how to trigger this error...
 // TEST_F(BesselErrorsTest, hankelH1AlgorithmTermination) {
@@ -211,6 +389,17 @@ TEST_F(BesselErrorsTest, hankelH2Overflow) {
   EXPECT_EQ("Overflow             -- No computation, order is too large or abs(z) too small or both", besselErrors.errorMessage);
 }
 
+TEST_F(BesselErrorsTest, hankelH2pOverflow) {
+  auto z = std::complex<double>(10.0,10.0);
+  hankelH2p(300, z, false, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(2, element.errorCode);
+    EXPECT_EQ("Overflow             -- No computation, order is too large or abs(z) too small or both", element.errorMessage);
+  }
+}
+
 TEST_F(BesselErrorsTest, hankelH2PartialLossOfSignificance) {
   auto z = std::complex<double>(35'000.0,0.0);
   hankelH2(0, z, false, &besselErrors);
@@ -218,11 +407,33 @@ TEST_F(BesselErrorsTest, hankelH2PartialLossOfSignificance) {
   EXPECT_EQ("Loss of significance -- abs(z) or order large \n computation done but losses of significance by argument reduction produce less than half of machine accuracy", besselErrors.errorMessage);
 }
 
+TEST_F(BesselErrorsTest, hankelH2pPartialLossOfSignificance) {
+  auto z = std::complex<double>(35'000.0,0.0);
+  hankelH2p(0, z, false, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(3, element.errorCode);
+    EXPECT_EQ("Loss of significance -- abs(z) or order large \n computation done but losses of significance by argument reduction produce less than half of machine accuracy", element.errorMessage);
+  }
+}
+
 TEST_F(BesselErrorsTest, hankelH2FullLossOfSignificance) {
   auto z = std::complex<double>(1'500'000'000.0,0.0);
   hankelH2(0, z, false, &besselErrors);
   EXPECT_EQ(4, besselErrors.errorCode);
   EXPECT_EQ("Loss of significance -- abs(z) or order too large\n no computation because of complete loss of significance by argument reduction", besselErrors.errorMessage);
+}
+
+TEST_F(BesselErrorsTest, hankelH2pFullLossOfSignificance) {
+  auto z = std::complex<double>(1'500'000'000.0,0.0);
+  hankelH2p(0, z, false, &besselErrors_vec);
+
+  for (auto element : besselErrors_vec)
+  {
+    EXPECT_EQ(4, element.errorCode);
+    EXPECT_EQ("Loss of significance -- abs(z) or order too large\n no computation because of complete loss of significance by argument reduction", element.errorMessage);
+  }
 }
 
 // Not sure how to trigger this error...
@@ -288,7 +499,7 @@ TEST_F(BesselErrorsTest, biryFullLossOfSignificance) {
 }
 
 // Not sure how to trigger this error...
-// TEST_F(BesselErrorsTest, airyAlgorithmTermination) {
+// TEST_F(BesselErrorsTest, biryAlgorithmTermination) {
 //   auto z = std::complex<double>(1'500'000'000.0,0.0);
 //   besselK(0, z, false, &besselErrors);
 //   EXPECT_EQ(5, besselErrors.errorCode);
