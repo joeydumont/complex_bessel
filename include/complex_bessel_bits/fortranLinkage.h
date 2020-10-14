@@ -58,7 +58,7 @@ extern void zbesh_wrap(double,double,double,int,int,int,double*,double*,int*,int
 extern void zairy_wrap(double,double,int,int,double*,double*,int*,int*);
 
 /*! Airy function of the second kind. */
-extern void zbiry_wrap(double,double,int,int,double*,double*,int*,int*);
+extern void zbiry_wrap(double,double,int,int,double*,double*,int*);
 }
 ///@}
 
