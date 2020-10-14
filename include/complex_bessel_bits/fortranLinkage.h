@@ -37,28 +37,28 @@ namespace sp_bessel {
  * is for error signaling.
  */
 ///@{
-extern "C"
-{
-/*! Bessel function of the first kind. */
-extern void zbesj_wrap(double,double,double,int,int,double*,double*,int*,int*);
+extern "C" {
+  /*! Bessel function of the first kind. */
+  extern void zbesj_wrap(double, double, double, int, int, double*, double*, int*, int*);
 
-/*! Bessel function of the second kind. */
-extern void zbesy_wrap(double,double,double,int,int,double*,double*,int*, double*,double*,int*);
+  /*! Bessel function of the second kind. */
+  extern void
+  zbesy_wrap(double, double, double, int, int, double*, double*, int*, double*, double*, int*);
 
-/*! Modified Bessel function of the first kind. */
-extern void zbesi_wrap(double,double,double,int,int,double*,double*,int*,int*);
+  /*! Modified Bessel function of the first kind. */
+  extern void zbesi_wrap(double, double, double, int, int, double*, double*, int*, int*);
 
-/*! Modified Bessel function of the second kind. */
-extern void zbesk_wrap(double,double,double,int,int,double*,double*,int*,int*);
+  /*! Modified Bessel function of the second kind. */
+  extern void zbesk_wrap(double, double, double, int, int, double*, double*, int*, int*);
 
-/*! Hankel function of both kinds. Kind determined by integer argument. */
-extern void zbesh_wrap(double,double,double,int,int,int,double*,double*,int*,int*);
+  /*! Hankel function of both kinds. Kind determined by integer argument. */
+  extern void zbesh_wrap(double, double, double, int, int, int, double*, double*, int*, int*);
 
-/*! Airy function of the first kind. */
-extern void zairy_wrap(double,double,int,int,double*,double*,int*,int*);
+  /*! Airy function of the first kind. */
+  extern void zairy_wrap(double, double, int, int, double*, double*, int*, int*);
 
-/*! Airy function of the second kind. */
-extern void zbiry_wrap(double,double,int,int,double*,double*,int*);
+  /*! Airy function of the second kind. */
+  extern void zbiry_wrap(double, double, int, int, double*, double*, int*);
 }
 ///@}
 
