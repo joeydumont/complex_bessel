@@ -37,7 +37,8 @@ namespace sp_bessel {
  * is for error signaling.
  */
 ///@{
-extern "C" {
+extern "C"
+{
   /*! Bessel function of the first kind. */
   extern void zbesj_wrap(double, double, double, int, int, double*, double*, int*, int*);
 

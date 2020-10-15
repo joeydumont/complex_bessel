@@ -432,7 +432,7 @@ biry(std::complex<double> z, int id = 0, bool scale = false, BesselErrors* error
 
   // Output values.
   double bir, bii;
-  int    nz, ierr;
+  int    ierr;
 
   // External function call.
   zbiry_wrap(zr, zi, id, kode, &bir, &bii, &ierr);
