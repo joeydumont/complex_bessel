@@ -20,7 +20,7 @@ jobs:
 
           # add check ehere
           cd $GITHUB_WORKSPACE
-          ./.github/scripts/run-clang-format.py
+          ./.github/scripts/run-clang-format.py -r include tests
 
   build:
     # The type of runner that the job will run on
