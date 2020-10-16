@@ -22,7 +22,7 @@ jobs:
     steps:
 
       - uses: actions/checkout@v2
-      - name: Checks clang-format
+      - name: Checks clang-format-9
         run: |
           sudo apt-get install clang-format
 
