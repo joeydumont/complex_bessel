@@ -49,15 +49,12 @@ jobs:
           sudo cmake --build .
           sudo cmake --build . --target install
 
-      - name: Compile the package and run the tests
+      - name: Compile the package.
         run: |
           cd $GITHUB_WORKSPACE
           bash build.sh
 
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
+
       - name: Run tests
         run: |
           cd $GITHUB_WORKSPACE
