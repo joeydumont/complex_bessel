@@ -24,11 +24,11 @@ jobs:
       - uses: actions/checkout@v2
       - name: Checks clang-format-9
         run: |
-          sudo apt-get install clang-format
+          sudo apt-get install clang-format.
 
           # add check ehere
           cd $GITHUB_WORKSPACE
-          ./.github/scripts/run-clang-format.py -r include tests
+          ./.github/scripts/run-clang-format.py --clang-format-executable clang-format-9 -r include tests
 
   build:
     # The type of runner that the job will run on
