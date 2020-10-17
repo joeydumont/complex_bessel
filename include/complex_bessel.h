@@ -20,10 +20,10 @@
  * \copyright LGPL.
  */
 
+#include "complex_bessel_bits/besselFunctions.h"
 #include "complex_bessel_bits/errors.h"
 #include "complex_bessel_bits/fortranLinkage.h"
-#include "complex_bessel_bits/utilities.h"
-#include "complex_bessel_bits/besselFunctions.h"
 #include "complex_bessel_bits/sph_besselFunctions.h"
+#include "complex_bessel_bits/utilities.h"
 
 #endif // COMPLEX_BESSEL

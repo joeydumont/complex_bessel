@@ -1,0 +1,18 @@
+﻿---
+BasedOnStyle: Mozilla
+AlignAfterOpenBracket: AlwaysBreak
+AlignConsecutiveMacros: true
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignEscapedNewlines: Left
+AlignOperands: true
+AlignTrailingComments: true
+AllowShortCaseLabelsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: true
+BinPackArguments: false
+BinPackParameters: false
+ColumnLimit: 104
+ReflowComments: true
+SortIncludes: true
+SortUsingDeclarations: true
+UseTab: Never
