@@ -13,16 +13,15 @@ from __future__ import print_function, unicode_literals
 import argparse
 import codecs
 import difflib
+import errno
 import fnmatch
 import io
-import errno
 import multiprocessing
 import os
 import signal
 import subprocess
 import sys
 import traceback
-
 from functools import partial
 
 try:
@@ -238,7 +237,7 @@ def print_diff(diff_lines, use_color):
     if use_color:
         diff_lines = colorize(diff_lines)
     if sys.version_info[0] < 3:
-        sys.stdout.writelines((l.encode("utf-8") for l in diff_lines))
+        sys.stdout.writelines((line.encode("utf-8") for line in diff_lines))
     else:
         sys.stdout.writelines(diff_lines)
 
