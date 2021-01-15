@@ -67,14 +67,15 @@ main(void)
     H5Dcreate(metadata_group, "order", H5T_NATIVE_INT, dataspace_nu, H5P_DEFAULT, dcpl, H5P_DEFAULT);
 
   // Create dataset for error code.
-  hsize_t error_array[2] = { nu_max, size };
+  hsize_t error_array[2]  = { nu_max, size };
   hid_t   dataspace_error = H5Screate_simple(2, error_array, NULL);
-  errorDset = H5Dcreate(metadata_group, "errorCode", H5T_NATIVE_INT, dataspace_error, H5P_DEFAULT, dcpl, H5P_DEFAULT);
+  errorDset               = H5Dcreate(
+    metadata_group, "errorCode", H5T_NATIVE_INT, dataspace_error, H5P_DEFAULT, dcpl, H5P_DEFAULT);
 
   // Prepare arrays to store data and metadata.
   typedef boost::multi_array<int, 1>                  order_array_type;
   typedef boost::multi_array<double, 1>               metadata_array_type;
-  typedef boost::multi_array<int,2>                   error_array_type;
+  typedef boost::multi_array<int, 2>                  error_array_type;
   typedef boost::multi_array<std::complex<double>, 2> data_array_type;
 
   metadata_array_type exponent(boost::extents[size]);

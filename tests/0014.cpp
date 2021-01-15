@@ -11,7 +11,7 @@ class BesselErrorsTest : public ::testing::Test
 public:
   BesselErrorsTest() {}
 
-  std::vector<BesselErrors>               besselErrors;
+  std::vector<BesselErrors> besselErrors;
 
 protected:
   void SetUp() override {}
@@ -78,7 +78,8 @@ TEST_F(BesselErrorsTest, besselJpOverflow)
   besselJp(0, z, 1, &besselErrors);
   EXPECT_EQ(2, besselErrors[0].errorCode);
   EXPECT_EQ(
-    "Overflow             -- No computation, Im(z) too large for scale=false", besselErrors[0].errorMessage);
+    "Overflow             -- No computation, Im(z) too large for scale=false",
+    besselErrors[0].errorMessage);
 }
 
 TEST_F(BesselErrorsTest, besselJPartialLossOfSignificance)
@@ -245,8 +246,8 @@ TEST_F(BesselErrorsTest, besselIpOverflow)
 
   EXPECT_EQ(2, besselErrors[0].errorCode);
   EXPECT_EQ(
-    "Overflow             -- No computation, Re(z) too large for scale=false", besselErrors[0].errorMessage);
-
+    "Overflow             -- No computation, Re(z) too large for scale=false",
+    besselErrors[0].errorMessage);
 }
 
 TEST_F(BesselErrorsTest, besselIPartialLossOfSignificance)
@@ -411,7 +412,6 @@ TEST_F(BesselErrorsTest, hankelH1pOverflow)
   EXPECT_EQ(
     "Overflow             -- No computation, order is too large or abs(z) too small or both",
     besselErrors[0].errorMessage);
-
 }
 
 TEST_F(BesselErrorsTest, hankelH1PartialLossOfSignificance)

@@ -65,7 +65,11 @@ diffBessel(
 /*! Computes the Bessel functions of the first kind with the reflection formula
  * \f$J_{-\nu}(z) = (-1)^\nu J_\nu(z)\f$. \cite ABR65 Sec. 9.1.5. */
 inline std::complex<double>
-besselJ(double order, std::complex<double> z, bool scale = false, std::vector<BesselErrors>* error = nullptr)
+besselJ(
+  double                     order,
+  std::complex<double>       z,
+  bool                       scale = false,
+  std::vector<BesselErrors>* error = nullptr)
 {
   // Input values for Fortran subroutines.
   double zr   = std::real(z);
@@ -88,15 +92,13 @@ besselJ(double order, std::complex<double> z, bool scale = false, std::vector<Be
 
   // If an error struct is provided, set the error number and message.
   if (error) {
-    error->push_back(
-      {
-        .errorCode = errorMessages.at("besselJ").at(ierr).errorCode,
-        .errorMessage = errorMessages.at("besselJ").at(ierr).errorMessage,
-        .functionName = "BesselJ",
-        .z = z,
-        .order = order,
-      }
-    );
+    error->push_back({
+      .errorCode    = errorMessages.at("besselJ").at(ierr).errorCode,
+      .errorMessage = errorMessages.at("besselJ").at(ierr).errorMessage,
+      .functionName = "BesselJ",
+      .z            = z,
+      .order        = order,
+    });
   }
 
   // If order is negative, then we must apply the reflection formula.
@@ -115,20 +117,17 @@ besselJ(double order, std::complex<double> z, bool scale = false, std::vector<Be
 
     // If an error struct is provided, set the error number and message.
     if (error) {
-      error->push_back(
-        {
-          .errorCode = errorMessages.at("besselY").at(ierrY).errorCode,
-          .errorMessage = errorMessages.at("besselY").at(ierrY).errorMessage,
-          .functionName = "BesselY",
-          .z = z,
-          .order = order,
-        }
-      );
+      error->push_back({
+        .errorCode    = errorMessages.at("besselY").at(ierrY).errorCode,
+        .errorMessage = errorMessages.at("besselY").at(ierrY).errorMessage,
+        .functionName = "BesselY",
+        .z            = z,
+        .order        = order,
+      });
     }
 
     answer = c * answer - s * answerY;
   }
-
 
   return answer;
 }
@@ -143,7 +142,11 @@ besselJp(double order, std::complex<double> z, int n = 1, std::vector<BesselErro
 /*! Computes the Bessel function of the second kind with the reflection formula
  * \f$Y_{-\nu}(z) = (-1)^\nu Y_\nu(z)\f$ \cite ABR65 Sec 9.1.5. */
 inline std::complex<double>
-besselY(double order, std::complex<double> z, bool scale = false, std::vector<BesselErrors>* error = nullptr)
+besselY(
+  double                     order,
+  std::complex<double>       z,
+  bool                       scale = false,
+  std::vector<BesselErrors>* error = nullptr)
 {
   // Input values for Fortran subroutines
   double zr   = std::real(z);
@@ -161,15 +164,13 @@ besselY(double order, std::complex<double> z, bool scale = false, std::vector<Be
 
   // If an error struct is provided, set the error number and message.
   if (error) {
-    error->push_back(
-      {
-        .errorCode = errorMessages.at("besselY").at(ierr).errorCode,
-        .errorMessage = errorMessages.at("besselY").at(ierr).errorMessage,
-        .functionName = "BesselY",
-        .z = z,
-        .order = order,
-      }
-    );
+    error->push_back({
+      .errorCode    = errorMessages.at("besselY").at(ierr).errorCode,
+      .errorMessage = errorMessages.at("besselY").at(ierr).errorMessage,
+      .functionName = "BesselY",
+      .z            = z,
+      .order        = order,
+    });
   }
 
   // In passing from C++ to FORTRAN, the exact zero becomes the numerical zero (10^(-14)).
@@ -195,15 +196,13 @@ besselY(double order, std::complex<double> z, bool scale = false, std::vector<Be
 
     // If an error struct is provided, set the error number and message.
     if (error) {
-      error->push_back(
-        {
-          .errorCode = errorMessages.at("besselJ").at(ierrJ).errorCode,
-          .errorMessage = errorMessages.at("besselJ").at(ierrJ).errorMessage,
-          .functionName = "BesselJ",
-          .z = z,
-          .order = order,
-        }
-      );
+      error->push_back({
+        .errorCode    = errorMessages.at("besselJ").at(ierrJ).errorCode,
+        .errorMessage = errorMessages.at("besselJ").at(ierrJ).errorMessage,
+        .functionName = "BesselJ",
+        .z            = z,
+        .order        = order,
+      });
     }
     std::complex<double> answerJ(cyrJ, cyiJ);
     answer = s * answerJ + c * answer;
@@ -226,7 +225,11 @@ besselYp(double order, std::complex<double> z, int n = 1, std::vector<BesselErro
  *  \cite ABR65 \S9.6.2.
  */
 inline std::complex<double>
-besselI(double order, std::complex<double> z, bool scale = false, std::vector<BesselErrors>* error = nullptr)
+besselI(
+  double                     order,
+  std::complex<double>       z,
+  bool                       scale = false,
+  std::vector<BesselErrors>* error = nullptr)
 {
   // Input values for Fortran subroutines.
   double zr   = std::real(z);
@@ -244,15 +247,13 @@ besselI(double order, std::complex<double> z, bool scale = false, std::vector<Be
 
   // If an error struct is provided, set the error number and message.
   if (error) {
-    error->push_back(
-      {
-        .errorCode = errorMessages.at("besselI").at(ierr).errorCode,
-        .errorMessage = errorMessages.at("besselI").at(ierr).errorMessage,
-        .functionName = "BesselI",
-        .z = z,
-        .order = order,
-      }
-    );
+    error->push_back({
+      .errorCode    = errorMessages.at("besselI").at(ierr).errorCode,
+      .errorMessage = errorMessages.at("besselI").at(ierr).errorMessage,
+      .functionName = "BesselI",
+      .z            = z,
+      .order        = order,
+    });
   }
 
   // Enforcing some conditions on the output as a function of the output.,
@@ -279,15 +280,13 @@ besselI(double order, std::complex<double> z, bool scale = false, std::vector<Be
 
     // If an error struct is provided, set the error number and message.
     if (error) {
-      error->push_back(
-        {
-          .errorCode = errorMessages.at("besselK").at(ierrK).errorCode,
-          .errorMessage = errorMessages.at("besselK").at(ierrK).errorMessage,
-          .functionName = "BesselK",
-          .z = z,
-          .order = order,
-        }
-      );
+      error->push_back({
+        .errorCode    = errorMessages.at("besselK").at(ierrK).errorCode,
+        .errorMessage = errorMessages.at("besselK").at(ierrK).errorMessage,
+        .functionName = "BesselK",
+        .z            = z,
+        .order        = order,
+      });
     }
 
     if (zi == 0.0 && zr >= 0.0)
@@ -309,7 +308,11 @@ besselIp(double order, std::complex<double> z, int n = 1, std::vector<BesselErro
 /*! Computes the modified Bessel function of the second kind. Negative
  *  orders are equal to the positive ones: \f$K_{-nu}(z)=K_{nu}(z)\f$. */
 inline std::complex<double>
-besselK(double order, std::complex<double> z, bool scale = false, std::vector<BesselErrors>* error = nullptr)
+besselK(
+  double                     order,
+  std::complex<double>       z,
+  bool                       scale = false,
+  std::vector<BesselErrors>* error = nullptr)
 {
   // Input values for Fortran subroutines.
   double zr   = std::real(z);
@@ -327,15 +330,13 @@ besselK(double order, std::complex<double> z, bool scale = false, std::vector<Be
 
   // If an error struct is provided, set the error number and message.
   if (error) {
-    error->push_back(
-      {
-        .errorCode = errorMessages.at("besselK").at(ierr).errorCode,
-        .errorMessage = errorMessages.at("besselK").at(ierr).errorMessage,
-        .functionName = "BesselK",
-        .z = z,
-        .order = order,
-      }
-    );
+    error->push_back({
+      .errorCode    = errorMessages.at("besselK").at(ierr).errorCode,
+      .errorMessage = errorMessages.at("besselK").at(ierr).errorMessage,
+      .functionName = "BesselK",
+      .z            = z,
+      .order        = order,
+    });
   }
 
   // In passing from C++ to FORTRAN, the exact zero becomes the numerical zero (10^(-14)).
@@ -357,7 +358,11 @@ besselK(double order, std::complex<double> z, bool scale = false, std::vector<Be
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 inline static std::complex<double>
-expBesselK(double order, std::complex<double> z, bool scale = false, std::vector<BesselErrors>* error = nullptr)
+expBesselK(
+  double                     order,
+  std::complex<double>       z,
+  bool                       scale = false,
+  std::vector<BesselErrors>* error = nullptr)
 {
   return std::exp(order * constants::pi * constants::i) * besselK(order, z, false, error);
 }
@@ -375,7 +380,11 @@ besselKp(double order, std::complex<double> z, int n = 1, std::vector<BesselErro
  * the reflection formula \f$H^{(1)}_{-\nu}(z) = H^{(1)}_\nu(z)\exp\left(\pi\nu\imath\right)
  * \f$. */
 inline std::complex<double>
-hankelH1(double order, std::complex<double> z, bool scale = false, std::vector<BesselErrors>* error = nullptr)
+hankelH1(
+  double                     order,
+  std::complex<double>       z,
+  bool                       scale = false,
+  std::vector<BesselErrors>* error = nullptr)
 {
   // Input values.
   double zr   = std::real(z);
@@ -395,52 +404,46 @@ hankelH1(double order, std::complex<double> z, bool scale = false, std::vector<B
 
   // If an error struct is provided, set the error number and message.
   if (error) {
-    error->push_back(
-      {
-        .errorCode = errorMessages.at("hankelH").at(ierr).errorCode,
-        .errorMessage = errorMessages.at("hankelH").at(ierr).errorMessage,
-        .functionName = "hankelH1",
-        .z = z,
-        .order = order,
-      }
-    );
+    error->push_back({
+      .errorCode    = errorMessages.at("hankelH").at(ierr).errorCode,
+      .errorMessage = errorMessages.at("hankelH").at(ierr).errorMessage,
+      .functionName = "hankelH1",
+      .z            = z,
+      .order        = order,
+    });
   }
 
- if (ierr == 2 or std::abs(z) < 0.1 ) {
-   zbesj_wrap(zr, zi, nu, kode, kind, &cyr, &cyi, &nz, &ierr);
+  if (ierr == 2 or std::abs(z) < 0.1) {
+    zbesj_wrap(zr, zi, nu, kode, kind, &cyr, &cyi, &nz, &ierr);
 
-  // If an error struct is provided, set the error number and message.
-  if (error) {
-    error->push_back(
-      {
-        .errorCode = errorMessages.at("besselJ").at(ierr).errorCode,
+    // If an error struct is provided, set the error number and message.
+    if (error) {
+      error->push_back({
+        .errorCode    = errorMessages.at("besselJ").at(ierr).errorCode,
         .errorMessage = errorMessages.at("besselJ").at(ierr).errorMessage,
         .functionName = "BesselJ",
-        .z = z,
-        .order = order,
-      }
-    );
-  }
+        .z            = z,
+        .order        = order,
+      });
+    }
 
-  answer = std::complex<double>(cyr,cyi);
+    answer = std::complex<double>(cyr, cyi);
 
-  zbesy_wrap(zr, zi, nu, kode, N, &cyr, &cyi, &nz, &cwrkr, &cwrki, &ierr);
+    zbesy_wrap(zr, zi, nu, kode, N, &cyr, &cyi, &nz, &cwrkr, &cwrki, &ierr);
 
-  // If an error struct is provided, set the error number and message.
-  if (error) {
-    error->push_back(
-      {
-        .errorCode = errorMessages.at("besselY").at(ierr).errorCode,
+    // If an error struct is provided, set the error number and message.
+    if (error) {
+      error->push_back({
+        .errorCode    = errorMessages.at("besselY").at(ierr).errorCode,
         .errorMessage = errorMessages.at("besselY").at(ierr).errorMessage,
         .functionName = "BesselY",
-        .z = z,
-        .order = order,
-      }
-    );
-  }
+        .z            = z,
+        .order        = order,
+      });
+    }
 
-  answer += 1i*std::complex<double>(cyr,cyi);
-}
+    answer += 1i * std::complex<double>(cyr, cyi);
+  }
 
   // Reflection formula if order is negative.
   if (order < 0.0)
@@ -459,7 +462,11 @@ hankelH1p(double order, std::complex<double> z, int n = 1, std::vector<BesselErr
 /*! Computes the Hankel function of the second kind. We also implement the reflection
  * formula \f$H^{(1)}_{-\nu}(z) = H^{(1)}_\nu(z)\exp\left(-\pi\nu\imath\right)\f$. */
 inline std::complex<double>
-hankelH2(double order, std::complex<double> z, bool scale = false, std::vector<BesselErrors>* error = nullptr)
+hankelH2(
+  double                     order,
+  std::complex<double>       z,
+  bool                       scale = false,
+  std::vector<BesselErrors>* error = nullptr)
 {
   //    // Input values.
   double zr   = std::real(z);
@@ -477,15 +484,13 @@ hankelH2(double order, std::complex<double> z, bool scale = false, std::vector<B
   zbesh_wrap(zr, zi, nu, kode, kind, N, &cyr, &cyi, &nz, &ierr);
   // If an error struct is provided, set the error number and message.
   if (error) {
-    error->push_back(
-      {
-        .errorCode = errorMessages.at("hankelH").at(ierr).errorCode,
-        .errorMessage = errorMessages.at("hankelH").at(ierr).errorMessage,
-        .functionName = "hankelH2",
-        .z = z,
-        .order = order,
-      }
-    );
+    error->push_back({
+      .errorCode    = errorMessages.at("hankelH").at(ierr).errorCode,
+      .errorMessage = errorMessages.at("hankelH").at(ierr).errorMessage,
+      .functionName = "hankelH2",
+      .z            = z,
+      .order        = order,
+    });
   }
   std::complex<double> answer(cyr, cyi);
 
@@ -493,32 +498,28 @@ hankelH2(double order, std::complex<double> z, bool scale = false, std::vector<B
     zbesj_wrap(zr, zi, nu, kode, kind, &cyr, &cyi, &nz, &ierr);
     // If an error struct is provided, set the error number and message.
     if (error) {
-      error->push_back(
-        {
-          .errorCode = errorMessages.at("besselJ").at(ierr).errorCode,
-          .errorMessage = errorMessages.at("besselJ").at(ierr).errorMessage,
-          .functionName = "BesselJ",
-          .z = z,
-          .order = order,
-        }
-      );
+      error->push_back({
+        .errorCode    = errorMessages.at("besselJ").at(ierr).errorCode,
+        .errorMessage = errorMessages.at("besselJ").at(ierr).errorMessage,
+        .functionName = "BesselJ",
+        .z            = z,
+        .order        = order,
+      });
     }
-    answer = std::complex<double>(cyr,cyi);
+    answer = std::complex<double>(cyr, cyi);
 
     zbesy_wrap(zr, zi, nu, kode, N, &cyr, &cyi, &nz, &cwrkr, &cwrki, &ierr);
     // If an error struct is provided, set the error number and message.
     if (error) {
-      error->push_back(
-        {
-          .errorCode = errorMessages.at("besselY").at(ierr).errorCode,
-          .errorMessage = errorMessages.at("besselY").at(ierr).errorMessage,
-          .functionName = "BesselY",
-          .z = z,
-          .order = order,
-        }
-      );
+      error->push_back({
+        .errorCode    = errorMessages.at("besselY").at(ierr).errorCode,
+        .errorMessage = errorMessages.at("besselY").at(ierr).errorMessage,
+        .functionName = "BesselY",
+        .z            = z,
+        .order        = order,
+      });
     }
-    answer -= 1i*std::complex<double>(cyr,cyi);
+    answer -= 1i * std::complex<double>(cyr, cyi);
   }
 
   // Reflection formula if order is negative.
@@ -552,15 +553,13 @@ airy(std::complex<double> z, int id = 0, bool scale = false, std::vector<BesselE
   zairy_wrap(zr, zi, id, kode, &air, &aii, &nz, &ierr);
   // If an error struct is provided, set the error number and message.
   if (error) {
-    error->push_back(
-      {
-        .errorCode = errorMessages.at("airy").at(ierr).errorCode,
-        .errorMessage = errorMessages.at("airy").at(ierr).errorMessage,
-        .functionName = "airy",
-        .z = z,
-        .order = (double)id,
-      }
-    );
+    error->push_back({
+      .errorCode    = errorMessages.at("airy").at(ierr).errorCode,
+      .errorMessage = errorMessages.at("airy").at(ierr).errorMessage,
+      .functionName = "airy",
+      .z            = z,
+      .order        = (double)id,
+    });
   }
 
   std::complex<double> answer(air, aii);
@@ -592,15 +591,13 @@ biry(std::complex<double> z, int id = 0, bool scale = false, std::vector<BesselE
   zbiry_wrap(zr, zi, id, kode, &bir, &bii, &ierr);
   // If an error struct is provided, set the error number and message.
   if (error) {
-    error->push_back(
-      {
-        .errorCode = errorMessages.at("biry").at(ierr).errorCode,
-        .errorMessage = errorMessages.at("biry").at(ierr).errorMessage,
-        .functionName = "biry",
-        .z = z,
-        .order = (double)id,
-      }
-    );
+    error->push_back({
+      .errorCode    = errorMessages.at("biry").at(ierr).errorCode,
+      .errorMessage = errorMessages.at("biry").at(ierr).errorMessage,
+      .functionName = "biry",
+      .z            = z,
+      .order        = (double)id,
+    });
   }
   std::complex<double> answer(bir, bii);
 

@@ -38,11 +38,11 @@ typedef struct BesselErrorsRaw
 
 typedef struct BesselErrors
 {
-  ErrorCode errorCode;
-  std::string errorMessage;
-  std::string functionName; // Name of the function that triggered the error.
-  std::complex<double> z; // Argument that triggered the error.
-  double order; // Order that triggered the error.
+  ErrorCode            errorCode;
+  std::string          errorMessage;
+  std::string          functionName; // Name of the function that triggered the error.
+  std::complex<double> z;            // Argument that triggered the error.
+  double               order;        // Order that triggered the error.
 } BesselErrors;
 
 static const std::unordered_map<std::string, std::array<BesselErrorsRaw, 6>> errorMessages = {
@@ -51,13 +51,14 @@ static const std::unordered_map<std::string, std::array<BesselErrorsRaw, 6>> err
       BesselErrorsRaw{ Success, "Normal return        -- Computation completed." },
       BesselErrorsRaw{ InputError, "Input error          -- No computation" },
       BesselErrorsRaw{ Overflow,
-                    "Overflow             -- No computation, Im(z) too large for scale=false" },
-      BesselErrorsRaw{ PartialLossOfSignificance,
-                    "Loss of significance -- abs(z) or order large \n computation done but losses of "
-                    "significance by argument reduction produce less than half of machine accuracy" },
+                       "Overflow             -- No computation, Im(z) too large for scale=false" },
+      BesselErrorsRaw{
+        PartialLossOfSignificance,
+        "Loss of significance -- abs(z) or order large \n computation done but losses of "
+        "significance by argument reduction produce less than half of machine accuracy" },
       BesselErrorsRaw{ FullLossOfSignificance,
-                    "Loss of significance -- abs(z) or order too large\n no computation because of "
-                    "complete loss of significance by argument reduction" },
+                       "Loss of significance -- abs(z) or order too large\n no computation because of "
+                       "complete loss of significance by argument reduction" },
       BesselErrorsRaw{
         AlgorithmTermination,
         "Error                -- no computation, algorithm termination condition not met" } } },
@@ -68,12 +69,13 @@ static const std::unordered_map<std::string, std::array<BesselErrorsRaw, 6>> err
       BesselErrorsRaw{
         Overflow,
         "Overflow             -- No computation, order is too large or abs(z) is too small or both" },
-      BesselErrorsRaw{ PartialLossOfSignificance,
-                    "Loss of significance -- abs(z) or order large \n computation done but losses of "
-                    "significance by argument reduction produce less than half of machine accuracy" },
+      BesselErrorsRaw{
+        PartialLossOfSignificance,
+        "Loss of significance -- abs(z) or order large \n computation done but losses of "
+        "significance by argument reduction produce less than half of machine accuracy" },
       BesselErrorsRaw{ FullLossOfSignificance,
-                    "Loss of significance -- abs(z) or order too large\n no computation because of "
-                    "complete loss of significance by argument reduction" },
+                       "Loss of significance -- abs(z) or order too large\n no computation because of "
+                       "complete loss of significance by argument reduction" },
       BesselErrorsRaw{
         AlgorithmTermination,
         "Error                -- no computation, algorithm termination condition not met" } } },
@@ -82,13 +84,14 @@ static const std::unordered_map<std::string, std::array<BesselErrorsRaw, 6>> err
       BesselErrorsRaw{ Success, "Normal return        -- Computation completed." },
       BesselErrorsRaw{ InputError, "Input error          -- No computation" },
       BesselErrorsRaw{ Overflow,
-                    "Overflow             -- No computation, Re(z) too large for scale=false" },
-      BesselErrorsRaw{ PartialLossOfSignificance,
-                    "Loss of significance -- abs(z) or order large \n computation done but losses of "
-                    "significance by argument reduction produce less than half of machine accuracy" },
+                       "Overflow             -- No computation, Re(z) too large for scale=false" },
+      BesselErrorsRaw{
+        PartialLossOfSignificance,
+        "Loss of significance -- abs(z) or order large \n computation done but losses of "
+        "significance by argument reduction produce less than half of machine accuracy" },
       BesselErrorsRaw{ FullLossOfSignificance,
-                    "Loss of significance -- abs(z) or order too large\n no computation because of "
-                    "complete loss of significance by argument reduction" },
+                       "Loss of significance -- abs(z) or order too large\n no computation because of "
+                       "complete loss of significance by argument reduction" },
       BesselErrorsRaw{
         AlgorithmTermination,
         "Error                -- no computation, algorithm termination condition not met" } } },
@@ -99,12 +102,13 @@ static const std::unordered_map<std::string, std::array<BesselErrorsRaw, 6>> err
       BesselErrorsRaw{
         Overflow,
         "Overflow             -- No computation, order is too large or abs(z) is too small or both" },
-      BesselErrorsRaw{ PartialLossOfSignificance,
-                    "Loss of significance -- abs(z) or order large \n computation done but losses of "
-                    "significance by argument reduction produce less than half of machine accuracy" },
+      BesselErrorsRaw{
+        PartialLossOfSignificance,
+        "Loss of significance -- abs(z) or order large \n computation done but losses of "
+        "significance by argument reduction produce less than half of machine accuracy" },
       BesselErrorsRaw{ FullLossOfSignificance,
-                    "Loss of significance -- abs(z) or order too large\n no computation because of "
-                    "complete loss of significance by argument reduction" },
+                       "Loss of significance -- abs(z) or order too large\n no computation because of "
+                       "complete loss of significance by argument reduction" },
       BesselErrorsRaw{
         AlgorithmTermination,
         "Error                -- no computation, algorithm termination condition not met" } } },
@@ -115,12 +119,13 @@ static const std::unordered_map<std::string, std::array<BesselErrorsRaw, 6>> err
       BesselErrorsRaw{
         Overflow,
         "Overflow             -- No computation, order is too large or abs(z) too small or both" },
-      BesselErrorsRaw{ PartialLossOfSignificance,
-                    "Loss of significance -- abs(z) or order large \n computation done but losses of "
-                    "significance by argument reduction produce less than half of machine accuracy" },
+      BesselErrorsRaw{
+        PartialLossOfSignificance,
+        "Loss of significance -- abs(z) or order large \n computation done but losses of "
+        "significance by argument reduction produce less than half of machine accuracy" },
       BesselErrorsRaw{ FullLossOfSignificance,
-                    "Loss of significance -- abs(z) or order too large\n no computation because of "
-                    "complete loss of significance by argument reduction" },
+                       "Loss of significance -- abs(z) or order too large\n no computation because of "
+                       "complete loss of significance by argument reduction" },
       BesselErrorsRaw{
         AlgorithmTermination,
         "Error                -- no computation, algorithm termination condition not met" } } },
@@ -131,12 +136,13 @@ static const std::unordered_map<std::string, std::array<BesselErrorsRaw, 6>> err
       BesselErrorsRaw{
         Overflow,
         "Overflow             -- No computation, Re(2/3*z*sqrt(z)) too large for scale=false" },
-      BesselErrorsRaw{ PartialLossOfSignificance,
-                    "Loss of significance -- abs(z) large \n computation done but losses of "
-                    "significance by argument reduction produce less than half of machine accuracy" },
+      BesselErrorsRaw{
+        PartialLossOfSignificance,
+        "Loss of significance -- abs(z) large \n computation done but losses of "
+        "significance by argument reduction produce less than half of machine accuracy" },
       BesselErrorsRaw{ FullLossOfSignificance,
-                    "Loss of significance -- abs(z) too large\n no computation because of complete "
-                    "loss of significance by argument reduction" },
+                       "Loss of significance -- abs(z) too large\n no computation because of complete "
+                       "loss of significance by argument reduction" },
       BesselErrorsRaw{
         AlgorithmTermination,
         "Error                -- no computation, algorithm termination condition not met" } } },
@@ -145,13 +151,14 @@ static const std::unordered_map<std::string, std::array<BesselErrorsRaw, 6>> err
       BesselErrorsRaw{ Success, "Normal return        -- Computation completed." },
       BesselErrorsRaw{ InputError, "Input error          -- No computation" },
       BesselErrorsRaw{ Overflow,
-                    "Overflow             -- No computation, Re(z) too large for scale=false" },
-      BesselErrorsRaw{ PartialLossOfSignificance,
-                    "Loss of significance -- abs(z) large \n computation done but losses of "
-                    "significance by argument reduction produce less than half of machine accuracy" },
+                       "Overflow             -- No computation, Re(z) too large for scale=false" },
+      BesselErrorsRaw{
+        PartialLossOfSignificance,
+        "Loss of significance -- abs(z) large \n computation done but losses of "
+        "significance by argument reduction produce less than half of machine accuracy" },
       BesselErrorsRaw{ FullLossOfSignificance,
-                    "Loss of significance -- abs(z) too large\n no computation because of complete "
-                    "loss of significance by argument reduction" },
+                       "Loss of significance -- abs(z) too large\n no computation because of complete "
+                       "loss of significance by argument reduction" },
       BesselErrorsRaw{
         AlgorithmTermination,
         "Error                -- no computation, algorithm termination condition not met" } } }
