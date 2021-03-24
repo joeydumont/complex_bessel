@@ -66,9 +66,9 @@ SET(CMAKE_Fortran_MODULE_DIRECTORY "${PROJECT_BINARY_DIR}/modules")
 ###############################################################################
 set(LIB complex_bessel)
 add_library(${LIB}
-        src/amos_iso_c_fortran_wrapper.f90
-        src/machine.for
-        src/zbesh.for
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/amos_iso_c_fortran_wrapper.f90
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/machine.for
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/zbesh.for
         )
 add_library(${NAMESPACE}${LIB} ALIAS ${LIB})
 
