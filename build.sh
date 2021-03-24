@@ -26,5 +26,6 @@ fi
 
 # Change to build dir and compile the library.
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_TESTING=ON  ..
+#cmake -DCMAKE_INSTALL_PREFIX=/usr -DBUILD_TESTING=ON  ..
+cmake -DBUILD_TESTING=ON  ..
 make $1

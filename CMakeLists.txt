@@ -3,39 +3,31 @@
 # Author:       Denis Gagnon                  <gagnon88@gmail.com>            #
 # Date:         2015-06-01                                                    #
 # Description:  CMake compilation instructions.                               #
+# Author:       Konstantin Ladutenko          <kostyfisik@gmail.com>          #
+# Date:         2021-03-24                                                    #
+# Description:  CMake3 update, using cmake config from                        #
+#               https://github.com/szaghi/PENF as a reference.                #
 # ----------------------------------------------------------------------------#
 
-# ----------------------------------------------------------------- #
-# --                 Name and version of library                 -- #
-# ----------------------------------------------------------------- #
-project(complex_bessel)
-set (complex_bessel_VERSION_MAJOR 0)
-set (complex_bessel_VERSION_MINOR 7)
-set (complex_bessel_VERSION_RELEASE 0)
+# The target of the complex_bessel library is exported
+# as complex_bessel::complex_bessel to a package configuration file for this
+# library
+#
+# usage:
+#     find_package(complex_bessel) or add_subdirectory(complex_bessel)
+# and then for your <target>:
+#     target_link_library(<target> complex_bessel::complex_bessel)
+#
+# the config file is generatet in the build and install directories
+#
+# to build the tests enable the option BUILD_TESTING
 
-# ----------------------------------------------------------------- #
-# --               Configuration and Dependencies                -- #
-# ----------------------------------------------------------------- #
-# -- CMake version and installation directory.
-cmake_minimum_required(VERSION 2.8)
-if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set (CMAKE_INSTALL_PREFIX /usr)
-endif()
+cmake_minimum_required(VERSION 3.16)
+project(complex_bessel VERSION 0.7.1 LANGUAGES Fortran C CXX)
 
-option(BUILD_STATIC_LIBS "Builds static libraries as well as shared libraries" OFF)
-option(BUILD_TESTING "Build the testing tree" OFF)
-
-# ----------------------------------------------------------------- #
-# --                    Compiler Configuration                   -- #
-# ----------------------------------------------------------------- #
-
-# -- Compiler config (flags and such)
-enable_language (Fortran)
-
-# -- Default build type
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
-endif(NOT CMAKE_BUILD_TYPE)
+# set export variables
+set(TARGETS_EXPORT_NAME "${PROJECT_NAME}-targets")
+set(NAMESPACE "${PROJECT_NAME}::")
 
 # C++14 Standard required
 set(CMAKE_CXX_STANDARD 14)
@@ -65,62 +57,120 @@ elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
   set (CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O3 -g -debug all")
 endif()
 
-# ----------------------------------------------------------------- #
-# --                  Compilation Instructions                   -- #
-# ----------------------------------------------------------------- #
-# -- Included files
-include_directories (${CMAKE_CURRENT_SOURCE_DIR}/include)
+include(GNUInstallDirs)
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
+SET(CMAKE_Fortran_MODULE_DIRECTORY "${PROJECT_BINARY_DIR}/modules")
 
-# -- Source files
-aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR}/src SRC_LIST)
+###############################################################################
+set(LIB complex_bessel)
+add_library(${LIB}
+        src/amos_iso_c_fortran_wrapper.f90
+        src/machine.for
+        src/zbesh.for
+        )
+add_library(${NAMESPACE}${LIB} ALIAS ${LIB})
 
-# -- Build a shared library
-add_library(${PROJECT_NAME} SHARED
-  ${SRC_LIST}
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/amos_iso_c_fortran_wrapper.f90"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/zbesh.for"
-  "${CMAKE_CURRENT_SOURCE_DIR}/src/machine.for")
+# C++ includes will propagate with complex_bessel::complex_bessel target
+# when linking it with some external files using cmake3.
+target_include_directories(${LIB} PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_Fortran_MODULE_DIRECTORY}>
+        $<INSTALL_INTERFACE:include>
+        )
 
-# Define the properties of the library to
-# be built (version and other stuff).
-set_target_properties (
-  ${PROJECT_NAME}
-  PROPERTIES
-    VERSION   ${complex_bessel_VERSION_MAJOR}.${complex_bessel_VERSION_MINOR}.${complex_bessel_VERSION_RELEASE}
-    SOVERSION ${complex_bessel_VERSION_MAJOR}.${complex_bessel_VERSION_MINOR}.${complex_bessel_VERSION_RELEASE}
-)
 
-target_link_libraries (${PROJECT_NAME} ${LIBS})
-install (TARGETS ${PROJECT_NAME} DESTINATION lib)
+# testing
+if(${PROJECT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR})
+  set(main_project TRUE)
+  option(BUILD_TESTING "Build the testing tree." OFF)
+else()
+  set(main_project FALSE)
 
-if (BUILD_STATIC_LIBS)
-  add_library(${PROJECT_NAME}_static STATIC
-    ${SRC_LIST}
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/amos_iso_c_fortran_wrapper.f90"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/zbesh.for"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/machine.for")
-
-  set_target_properties(
-    ${PROJECT_NAME}_static
-    PROPERTIES
-      VERSION ${complex_bessel_VERSION_MAJOR}.${complex_bessel_VERSION_MINOR}.${complex_bessel_VERSION_RELEASE}
-  )
-
-  # Link dependencies
-  target_link_libraries (${PROJECT_NAME}_static ${LIBS})
-
-  install (TARGETS ${PROJECT_NAME}_static DESTINATION lib)
-
+  # if this is not the main project but BUILD_TESTIG is set to TRUE
+  # the tests for this project can be enabled by also setting
+  # BUILD_TESTING_${PROJECT_NAME} to TRUE
+  include(CMakeDependentOption)
+  cmake_dependent_option(BUILD_TESTING_${PROJECT_NAME}
+          "Build the testing tree for project ${PROJECT_NAME}." OFF
+          "BUILD_TESTING;NOT main_project" OFF
+          )
 endif()
 
-# Install includes
-install (DIRECTORY include/ DESTINATION include)
-
-# ----------------------------------------------------------------- #
-# --                    Testing Infrastructure                   -- #
-# ----------------------------------------------------------------- #
-
-if (BUILD_TESTING)
+# build tests only by explicit request
+if((main_project OR BUILD_TESTING_${PROJECT_NAME}) AND BUILD_TESTING)
   include(CTest)
   add_subdirectory(tests)
 endif()
+
+# generate package config files
+set(project_config "${PROJECT_NAME}-config.cmake")
+set(project_config_version "${PROJECT_NAME}-config-version.cmake")
+set(cmake_files_dir "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles")
+set(default_config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+set(config_build_dir "${CMAKE_CURRENT_BINARY_DIR}/${default_config_install_dir}")
+set(${PROJECT_NAME}_INSTALL_CMAKEDIR ${default_config_install_dir} CACHE PATH "Path into which the cmake files for project ${PROJECT_NAME} will be installed.")
+
+# installation and export of targets
+install(DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}/
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+        COMPONENT Developement
+        )
+
+install(TARGETS ${LIB} EXPORT ${TARGETS_EXPORT_NAME}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT RuntimeLibraries
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT RuntimeLibraries
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+        )
+
+install(EXPORT ${TARGETS_EXPORT_NAME}
+        NAMESPACE
+        ${NAMESPACE}
+        DESTINATION
+        ${${PROJECT_NAME}_INSTALL_CMAKEDIR}
+        COMPONENT
+        ${PROJECT_NAME}_Development
+        )
+
+install(
+        FILES
+        "${cmake_files_dir}/${project_config}"
+        "${CMAKE_CURRENT_BINARY_DIR}/${project_config_version}"
+        DESTINATION
+        ${${PROJECT_NAME}_INSTALL_CMAKEDIR}
+        COMPONENT
+        ${PROJECT_NAME}_Development
+)
+
+install (DIRECTORY include/ DESTINATION include)
+
+# export targets into build
+export(EXPORT ${TARGETS_EXPORT_NAME}
+        NAMESPACE
+        ${NAMESPACE}
+        FILE
+        "${config_build_dir}/${TARGETS_EXPORT_NAME}.cmake"
+        )
+
+# create package config
+# Variables needed by PackageConfig.cmake.in: PROJECT_NAME, TARGETS_EXPORT_NAME
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(cmake/PackageConfig.cmake.in "${cmake_files_dir}/${project_config}"
+        INSTALL_DESTINATION ${${PROJECT_NAME}_INSTALL_CMAKEDIR}
+        )
+
+configure_package_config_file(cmake/PackageConfig.cmake.in "${config_build_dir}/${project_config}"
+        INSTALL_DESTINATION ${config_build_dir}
+        INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}
+        )
+
+write_basic_package_version_file(
+        ${project_config_version}
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion
+)
+
+#
