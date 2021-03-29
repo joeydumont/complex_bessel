@@ -65,7 +65,7 @@ SET(CMAKE_Fortran_MODULE_DIRECTORY "${PROJECT_BINARY_DIR}/modules")
 
 ###############################################################################
 set(LIB complex_bessel)
-add_library(${LIB}
+add_library(${LIB} SHARED
         ${CMAKE_CURRENT_SOURCE_DIR}/src/amos_iso_c_fortran_wrapper.f90
         ${CMAKE_CURRENT_SOURCE_DIR}/src/machine.for
         ${CMAKE_CURRENT_SOURCE_DIR}/src/zbesh.for
@@ -88,7 +88,7 @@ if(${PROJECT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR})
 else()
   set(main_project FALSE)
 
-  # if this is not the main project but BUILD_TESTIG is set to TRUE
+  # if this is not the main project but BUILD_TESTING is set to TRUE
   # the tests for this project can be enabled by also setting
   # BUILD_TESTING_${PROJECT_NAME} to TRUE
   include(CMakeDependentOption)

@@ -53,12 +53,12 @@ project CMakeLists.txt with:
   ```cmake
   find_package(complex_bessel)
 ```
-or you can just put a copy of `complex_bessel` source code with zero changes
+or you can just put a copy of `complex_bessel` source code
 into your source tree and just add it from the upper level CMakeLists.txt
   ```cmake
  add_subdirectory(complex_bessel)
 ```
-To compile and link this library you should have C\C++14 and Fortran compiles
+To compile and link this library you should have C, C++14, and Fortran compiles
 installed, and you should enable `C CXX Fortran` languages in CMakeLists.txt. 
 After that to link with your `<target>` you can just 
   ```cmake
