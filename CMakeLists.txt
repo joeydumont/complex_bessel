@@ -23,7 +23,7 @@
 # to build the tests enable the option BUILD_TESTING
 
 cmake_minimum_required(VERSION 3.16)
-project(complex_bessel VERSION 0.7.1 LANGUAGES Fortran C CXX)
+project(complex_bessel VERSION 0.7.1 LANGUAGES Fortran CXX)
 
 # set export variables
 set(TARGETS_EXPORT_NAME "${PROJECT_NAME}-targets")

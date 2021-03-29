@@ -58,14 +58,16 @@ into your source tree and just add it from the upper level CMakeLists.txt
   ```cmake
  add_subdirectory(complex_bessel)
 ```
-To compile and link this library you should have C, C++14, and Fortran compiles
-installed, and you should enable `C CXX Fortran` languages in CMakeLists.txt. 
+To compile and link this library you should have C++14 and Fortran compilers
+installed, and you should enable `CXX Fortran` languages in CMakeLists.txt.
 After that to link with your `<target>` you can just 
   ```cmake
   target_link_library(<target> complex_bessel::complex_bessel)
 ```
 Note, that CMake will add all additional needed include
 files to you project compilation automatically.
+
+To run tests you will need to use HDF5 library, Google Test, Boost 1.6+, and C compiler (to link with HDF5, so `C` is present in list of languages in tests/CMakeLists.txt)
 
  ## Other similar libraries
  
