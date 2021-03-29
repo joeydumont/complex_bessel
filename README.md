@@ -67,7 +67,7 @@ After that to link with your `<target>` you can just
 Note, that CMake will add all additional needed include
 files to you project compilation automatically.
 
-To run tests you will need to use HDF5 library, Google Test, Boost 1.6+, and C compiler (to link with HDF5, so `C` is present in list of languages in tests/CMakeLists.txt)
+To run tests you will need to use HDF5 , Google Test, Boost 1.6+, and C compiler (to link with HDF5, so `C` is present in the list of languages in tests/CMakeLists.txt)
 
  ## Other similar libraries
  
