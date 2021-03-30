@@ -43,7 +43,32 @@ it, you will have to run `cmake` manually like so:
   ```bash
   cmake -DCMAKE_INSTALL_PREFIX=/path/of/install/dir
  ```
- 
+
+The target of the complex_bessel library is exported
+as `complex_bessel::complex_bessel` to a package configuration file for this
+library.
+
+After installation you can find this library in your
+project CMakeLists.txt with:
+  ```cmake
+  find_package(complex_bessel)
+```
+or you can just put a copy of `complex_bessel` source code
+into your source tree and just add it from the upper level CMakeLists.txt
+  ```cmake
+ add_subdirectory(complex_bessel)
+```
+To compile and link this library you should have C++14 and Fortran compilers
+installed, and you should enable `CXX Fortran` languages in CMakeLists.txt.
+After that to link with your `<target>` you can just 
+  ```cmake
+  target_link_library(<target> complex_bessel::complex_bessel)
+```
+Note, that CMake will add all additional needed include
+files to you project compilation automatically.
+
+To run tests you will need to use HDF5 , Google Test, Boost 1.6+, and C compiler (to link with HDF5, so `C` is present in the list of languages in tests/CMakeLists.txt)
+
  ## Other similar libraries
  
  The FORTRAN library that is used as the main driver for the computation of Bessel functions is also used in
