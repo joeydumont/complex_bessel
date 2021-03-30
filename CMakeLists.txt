@@ -18,7 +18,7 @@
 # and then for your <target>:
 #     target_link_library(<target> complex_bessel::complex_bessel)
 #
-# the config file is generatet in the build and install directories
+# the config file is generated in the build and install directories
 #
 # to build the tests enable the option BUILD_TESTING
 
