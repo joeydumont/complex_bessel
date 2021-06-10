@@ -36,7 +36,7 @@ main(void)
 
   // Prepare the HDF5 file
   hid_t  file, data_group, metadata_group, dataspace, dataset, dcpl, complex_type;
-  hid_t  sumDset, orderDset, zDset;
+  hid_t  sumDset, orderDset, zDset, errorDset;
   herr_t status;
 
   status = H5open();
@@ -60,20 +60,28 @@ main(void)
   zDset =
     H5Dcreate(metadata_group, "z", H5T_NATIVE_DOUBLE, dataspace_z, H5P_DEFAULT, dcpl, H5P_DEFAULT);
 
-  //
+  // Create dataset for order.
   hsize_t nu_max_array[1] = { nu_max };
   hid_t   dataspace_nu    = H5Screate_simple(1, nu_max_array, NULL);
   orderDset =
     H5Dcreate(metadata_group, "order", H5T_NATIVE_INT, dataspace_nu, H5P_DEFAULT, dcpl, H5P_DEFAULT);
 
+  // Create dataset for error code.
+  hsize_t error_array[2]  = { nu_max, size };
+  hid_t   dataspace_error = H5Screate_simple(2, error_array, NULL);
+  errorDset               = H5Dcreate(
+    metadata_group, "errorCode", H5T_NATIVE_INT, dataspace_error, H5P_DEFAULT, dcpl, H5P_DEFAULT);
+
   // Prepare arrays to store data and metadata.
   typedef boost::multi_array<int, 1>                  order_array_type;
   typedef boost::multi_array<double, 1>               metadata_array_type;
+  typedef boost::multi_array<int, 2>                  error_array_type;
   typedef boost::multi_array<std::complex<double>, 2> data_array_type;
 
   metadata_array_type exponent(boost::extents[size]);
   metadata_array_type z(boost::extents[size]);
   order_array_type    nu(boost::extents[nu_max]);
+  error_array_type    errorCode(boost::extents[nu_max][size]);
   data_array_type     hankelH2Values(boost::extents[nu_max][size]);
   data_array_type     besselSumValues(boost::extents[nu_max][size]);
   data_array_type     difference(boost::extents[nu_max][size]);
@@ -87,9 +95,12 @@ main(void)
     z[j]        = std::pow(10, exponent[j]);
     std::cout << z[j] << "\n";
   }
+
+  std::vector<BesselErrors> besselErrors;
   for (int i = 0; i < nu_max; i++) {
     for (int j = 0; j < size; j++) {
-      hankelH2Values[i][j]  = hankelH2(i, z[j]);
+      hankelH2Values[i][j]  = hankelH2(i, z[j], false, &besselErrors);
+      errorCode[i][j]       = besselErrors[0].errorCode;
       besselSumValues[i][j] = besselJ(i, z[j]) - 1i * besselY(i, z[j]);
       difference[i][j]      = hankelH2Values[i][j] - besselSumValues[i][j];
     }
@@ -98,6 +109,7 @@ main(void)
   // Write the data.
   status = H5Dwrite(zDset, H5T_NATIVE_DOUBLE, H5S_ALL, dataspace_z, H5P_DEFAULT, z.data());
   status = H5Dwrite(orderDset, H5T_NATIVE_INT, H5S_ALL, dataspace_nu, H5P_DEFAULT, nu.data());
+  status = H5Dwrite(errorDset, H5T_NATIVE_INT, H5S_ALL, dataspace_error, H5P_DEFAULT, errorCode.data());
   status = H5Dwrite(dataset, complex_type, H5S_ALL, dataspace, H5P_DEFAULT, hankelH2Values.data());
   status = H5Dwrite(sumDset, complex_type, H5S_ALL, dataspace, H5P_DEFAULT, besselSumValues.data());
 
