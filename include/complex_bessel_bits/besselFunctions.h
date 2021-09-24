@@ -22,8 +22,6 @@
 #include "fortranLinkage.h"
 #include "utilities.h"
 
-using namespace std::complex_literals;
-
 namespace sp_bessel {
 
 /*! @name Evaluation of Bessel functions.

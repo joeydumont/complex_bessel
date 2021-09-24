@@ -113,11 +113,6 @@ set(config_build_dir "${CMAKE_CURRENT_BINARY_DIR}/${default_config_install_dir}"
 set(${PROJECT_NAME}_INSTALL_CMAKEDIR ${default_config_install_dir} CACHE PATH "Path into which the cmake files for project ${PROJECT_NAME} will be installed.")
 
 # installation and export of targets
-install(DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}/
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
-        COMPONENT Developement
-        )
-
 install(TARGETS ${LIB} EXPORT ${TARGETS_EXPORT_NAME}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT Development
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT RuntimeLibraries

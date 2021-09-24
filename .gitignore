@@ -19,3 +19,8 @@ Makefile.in
 /install-sh
 /missing
 /stamp-h1
+
+build/
+build_msvc/
+install/
+install_msvc/
